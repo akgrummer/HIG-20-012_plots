@@ -1,0 +1,7 @@
+temp
+bin/
+examples/
+*.pdf
+*.DS_Store
+sync.sh
+
