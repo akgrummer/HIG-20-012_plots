@@ -4,4 +4,4 @@ examples/
 *.pdf
 *.DS_Store
 sync.sh
-
+src/__pycache__/
