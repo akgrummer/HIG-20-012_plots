@@ -38,6 +38,7 @@ def rootplot_2Dhist(h1, year, tag, descriptionLabel, saveName, ofile):
     h1.Draw("COLZ1")
     if("Bkg" in saveName): h1.GetZaxis().SetRangeUser(0., 1.29)
     if("Data" in saveName): h1.GetZaxis().SetRangeUser(0., 1.29)
+    if("Sig" in saveName): h1.GetZaxis().SetRangeUser(0., 0.0065)
     h1.GetXaxis().SetRangeUser(251., 2000.)
     # h1.GetZaxis().SetTitle("Events/GeV^{2}")
     h1.GetZaxis().SetTitle("Entries/bin")
@@ -85,6 +86,20 @@ def DivideBinArea(h):
             )
     return h
 
+def lowStatsBinCut(h):
+    nXbin = h.GetNbinsX();
+    nYbin = h.GetNbinsY();
+    for yBin in range(nYbin):
+        for xBin in range(nXbin):
+            mX = h.GetXaxis().GetBinCenter(xBin);
+            mY = h.GetYaxis().GetBinCenter(yBin);
+            if( mX > 1678 and mY < 770 ): h.SetBinContent(xBin,yBin, -100)
+            if( mX > 1550 and mY < 205 ): h.SetBinContent(xBin,yBin, -100)
+            if( mX > 1423 and mY < 141 ): h.SetBinContent(xBin,yBin, -100)
+            if( mX > 959 and mY < 52): h.SetBinContent(xBin,yBin, -100)
+    return h
+
+
 def makePlotsPerYear(year, ifileName, ofile):
 
     inFile = ROOT.TFile(ifileName)
@@ -96,6 +111,10 @@ def makePlotsPerYear(year, ifileName, ofile):
     hSig = DivideBinArea(hSig)
     hData = DivideBinArea(hData)
     hBkg = DivideBinArea(hBkg)
+
+    hSig = lowStatsBinCut(hSig)
+    hData = lowStatsBinCut(hData)
+    hBkg = lowStatsBinCut(hBkg)
 
     rootplot_2Dhist(hData, year, "tag",
                     "Data distribution",
