@@ -11,12 +11,6 @@ import math
 
 def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down ):
 
-    #### get the histograms:
-    # get the 4b hist
-    # h1.Rebin(2)
-    # h2.Rebin(2)
-    # h_up.Rebin(2)
-    # h_down.Rebin(2)
     h4 = h2.Clone("h4")
 
     # determine the stat err / bin content for 4b hist

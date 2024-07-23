@@ -58,7 +58,7 @@ for theMass in massList:
     # print("here", inputGraph2sigmaName)
     theGraph2sigma = inputFile.Get(inputGraph2sigmaName)
     theGraph2sigma.SetTitle("")
-    theGraph2sigma.GetXaxis().SetTitle("m_{%s} [GeV]"%(othermassXY))
+    theGraph2sigma.GetXaxis().SetTitle("m_{%sreco} [GeV]"%(othermassXY))
     theGraph2sigma.GetXaxis().SetLabelFont(62)
     theGraph2sigma.GetXaxis().SetLabelSize(0.045)
     theGraph2sigma.GetXaxis().SetTitleFont(62)
@@ -132,20 +132,23 @@ for theMass in massList:
     theLegend.SetFillStyle(0) # make the legend background transparent
     theLegend.Draw("same")
 
+    odir = "results/Limits_vsm{0}/".format(massXY)
+    if not os.path.isdir(odir):
+        os.mkdir(odir)
 
-    odir = "results/Limits_{0}/".format(args.tag)
-    if not os.path.isdir(odir):
-        os.mkdir(odir)
-    if (args.unblind): odir = "{0}{1}/".format(odir,"unblinded")
-    else: odir = "{0}{1}/".format(odir,"blinded")
-    if not os.path.isdir(odir):
-        os.mkdir(odir)
-    odir = "{0}{1}/".format(odir,"vsm{0}".format(massXY))
-    if not os.path.isdir(odir):
-        os.mkdir(odir)
-    odir = "{0}{1}/".format(odir,args.year)
-    if not os.path.isdir(odir):
-        os.mkdir(odir)
+    # odir = "results/Limits_{0}/".format(args.tag)
+    # if not os.path.isdir(odir):
+    #     os.mkdir(odir)
+    # if (args.unblind): odir = "{0}{1}/".format(odir,"unblinded")
+    # else: odir = "{0}{1}/".format(odir,"blinded")
+    # if not os.path.isdir(odir):
+    #     os.mkdir(odir)
+    # odir = "{0}{1}/".format(odir,"vsm{0}".format(massXY))
+    # if not os.path.isdir(odir):
+    #     os.mkdir(odir)
+    # odir = "{0}{1}/".format(odir,args.year)
+    # if not os.path.isdir(odir):
+    #     os.mkdir(odir)
 
     # N_points = theGraph.GetN()
     # x, y = ROOT.Double(0), ROOT.Double(0)

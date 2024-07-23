@@ -112,10 +112,12 @@ void Plot2DLimitMap(TString tag, std::string year, std::string option = "syst", 
 
     std::string plotTitle = "Central Limit " + year;
     limitMap->SetTitle(plotTitle.c_str());
+    limitMap->GetXaxis()->SetTitle("m_{Xreco} [GeV]");
     limitMap->GetXaxis()->SetLabelFont(62);
     limitMap->GetXaxis()->SetLabelSize(0.045);
     limitMap->GetXaxis()->SetTitleFont(62);
     limitMap->GetXaxis()->SetTitleSize(0.045);
+    limitMap->GetYaxis()->SetTitle("m_{Yreco} [GeV]");
     limitMap->GetYaxis()->SetLabelFont(62);
     limitMap->GetYaxis()->SetLabelSize(0.045);
     limitMap->GetYaxis()->SetTitleFont(62);

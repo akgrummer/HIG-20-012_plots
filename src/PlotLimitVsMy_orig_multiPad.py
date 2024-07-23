@@ -115,7 +115,7 @@ for apad, theMass in enumerate(massList):
     inputGraph2sigmaName = "Limits_{0}/Option_{1}/2SigmaLimit_{0}_{1}_mass{2}_{3}".format(args.year, append, massXY, theMass)
     theGraph2sigma = inputFile.Get(inputGraph2sigmaName)
     theGraph2sigma.SetTitle("")
-    theGraph2sigma.GetXaxis().SetTitle("m_{%s} [GeV]"%(othermassXY))
+    theGraph2sigma.GetXaxis().SetTitle("m_{%sreco} [GeV]"%(othermassXY))
     theGraph2sigma.GetXaxis().SetLabelFont(62)
     theGraph2sigma.GetXaxis().SetLabelSize(0.08)
     theGraph2sigma.GetXaxis().SetTitleFont(62)
@@ -140,7 +140,7 @@ for apad, theMass in enumerate(massList):
     theGraph2sigma.GetYaxis().SetTitleOffset(1.1)
     # theGraph2sigma.GetYaxis().SetTitle("#sigma(pp #rightarrow X) #times BR(Y(b#bar{b}) H(b#bar{b})) [fb]")
     theGraph2sigma.GetYaxis().SetTitle("#sigma #times BR(YH) [fb]")
-    theGraph2sigma.SetTitle("m_{%s} = %i GeV"%(massXY,theMass))
+    theGraph2sigma.SetTitle("m_{%sreco} = %i GeV"%(massXY,theMass))
     theGraph2sigma.SetFillColor(color2sig)
     theGraph2sigma.Draw("a3")
 
@@ -175,9 +175,9 @@ for apad, theMass in enumerate(massList):
     plotlabels.SetTextFont(43)
     plotlabels.SetTextSize(16)
     if ((apad)%3==0):
-        plotlabels.DrawLatexNDC(0.35, 0.80, "m_{{{0}}} = {1} GeV".format(massXY, theMass))
+        plotlabels.DrawLatexNDC(0.35, 0.80, "m_{{{0}reco}} = {1} GeV".format(massXY, theMass))
     else: 
-        plotlabels.DrawLatexNDC(0.2, 0.80, "m_{{{0}}} = {1} GeV".format(massXY, theMass))
+        plotlabels.DrawLatexNDC(0.2, 0.80, "m_{{{0}reco}} = {1} GeV".format(massXY, theMass))
 
 ptotal.cd()
 
@@ -213,7 +213,7 @@ plotlabels.SetTextFont(63)
 plotlabels.SetTextSize(18)
 plotlabels.SetTextAlign(31)
 xpos=0.94
-plotlabels.DrawLatexNDC(xpos - 0.03, 0.11, "m_{Y} [GeV]")
+plotlabels.DrawLatexNDC(xpos - 0.03, 0.11, "m_{Yreco} [GeV]")
 arrow = TArrow(0.14,0.14,xpos,0.14,0.02,"|>");
 arrow.SetLineWidth(2);
 arrow.Draw();
@@ -223,20 +223,23 @@ plotlabels.DrawLatexNDC(0.04, ypos - 0.03, "#sigma(pp #rightarrow X) #times BR(Y
 arrow.DrawArrow(0.06,0.19,0.06,ypos,0.02,"|>");
 
 
+odir = "results/Limits_vsm{0}/".format(massXY)
+if not os.path.isdir(odir):
+    os.mkdir(odir)
 
-odir = "results/Limits_{0}/".format(args.tag)
-if not os.path.isdir(odir):
-    os.mkdir(odir)
-if (args.unblind): odir = "{0}{1}/".format(odir,"unblinded")
-else: odir = "{0}{1}/".format(odir,"blinded")
-if not os.path.isdir(odir):
-    os.mkdir(odir)
-odir = "{0}{1}/".format(odir,"vsm{0}".format(massXY))
-if not os.path.isdir(odir):
-    os.mkdir(odir)
-odir = "{0}{1}/".format(odir,args.year)
-if not os.path.isdir(odir):
-    os.mkdir(odir)
+# odir = "results/Limits_{0}/".format(args.tag)
+# if not os.path.isdir(odir):
+#     os.mkdir(odir)
+# if (args.unblind): odir = "{0}{1}/".format(odir,"unblinded")
+# else: odir = "{0}{1}/".format(odir,"blinded")
+# if not os.path.isdir(odir):
+#     os.mkdir(odir)
+# odir = "{0}{1}/".format(odir,"vsm{0}".format(massXY))
+# if not os.path.isdir(odir):
+#     os.mkdir(odir)
+# odir = "{0}{1}/".format(odir,args.year)
+# if not os.path.isdir(odir):
+#     os.mkdir(odir)
 
 theCanvas.SaveAs(odir+"Limits{0}_allMasses.pdf".format(args.year))
 del theCanvas

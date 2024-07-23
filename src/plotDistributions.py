@@ -42,33 +42,33 @@ def rootplot_2Dhist(h1, year, tag, descriptionLabel, saveName, ofile):
     h1.GetXaxis().SetRangeUser(251., 2000.)
     # h1.GetZaxis().SetTitle("Events/GeV^{2}")
     h1.GetZaxis().SetTitle("Entries/bin")
-    h1.GetXaxis().SetTitle("m_{X} [GeV]")
-    h1.GetYaxis().SetTitle("m_{Y} [GeV]")
+    h1.GetXaxis().SetTitle("m_{Xreco} [GeV]")
+    h1.GetYaxis().SetTitle("m_{Yreco} [GeV]")
 
     CMSlabel = TLatex()
     CMSlabel.SetTextFont(63)
     CMSlabel.SetTextSize( 30 )
     CMSlabel.DrawLatexNDC(0.16, 0.96, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}")
     plotlabels = TLatex()
-    
+
     plotlabels.SetTextFont(53)
     plotlabels.SetTextSize(20)
-    plotlabels.DrawLatexNDC(0.2, 0.82, descriptionLabel)
+    plotlabels.DrawLatexNDC(0.2, 0.86, descriptionLabel)
 
     plotlabels.SetTextFont(43)
     plotlabels.SetTextSize(20)
     # mXval = sig.split("MX_")[1].split("_MY_")[0]
     # mYval = sig.split("MX_")[1].split("_MY_")[1]
-    if("Sig" in saveName): plotlabels.DrawLatexNDC(0.2, 0.78,"m_{{X}}={0} GeV, m_{{Y}}={1} GeV".format(700, 300))
+    if("Sig" in saveName): plotlabels.DrawLatexNDC(0.2, 0.82,"m_{{Xreco}} = {0} GeV, m_{{Yreco}} = {1} GeV".format(700, 400))
 
     plotlabels.SetTextFont(63)
     plotlabels.SetTextSize(20)
     labelText = "Signal Region"
     plotlabels.DrawLatexNDC(0.2, 0.9, labelText)
 
-    plotlabels.SetTextFont(53)
-    plotlabels.SetTextSize(20)
-    plotlabels.DrawTextNDC(0.2, 0.86, "Data taking year: "+year)
+    plotlabels.SetTextFont(73)
+    plotlabels.SetTextSize(25)
+    plotlabels.DrawTextNDC(0.7, 0.96, year)
 
     odir = "results/"
     if not os.path.isdir(odir):
@@ -86,6 +86,18 @@ def DivideBinArea(h):
             )
     return h
 
+def getNoneZeroBins(h):
+    nXbin = h.GetNbinsX();
+    nYbin = h.GetNbinsY();
+    for yBin in range(nYbin):
+        for xBin in range(nXbin):
+            mX = h.GetXaxis().GetBinCenter(xBin);
+            mY = h.GetYaxis().GetBinCenter(yBin);
+            binContent = h.GetBinContent(xBin,yBin)
+            if (binContent > 0): h.SetBinContent(xBin,yBin, 1e-6)
+    return h
+
+
 def lowStatsBinCut(h):
     nXbin = h.GetNbinsX();
     nYbin = h.GetNbinsY();
@@ -93,6 +105,9 @@ def lowStatsBinCut(h):
         for xBin in range(nXbin):
             mX = h.GetXaxis().GetBinCenter(xBin);
             mY = h.GetYaxis().GetBinCenter(yBin);
+            # attempt to show correct bins cuts in the plots:
+            # binContent = h.GetBinContent(xBin,yBin)
+            # if (binContent == 0 and mX-mY>=125 and mX>400): h.SetBinContent(xBin,yBin, 1e-5)
             if( mX > 1678 and mY < 770 ): h.SetBinContent(xBin,yBin, -100)
             if( mX > 1550 and mY < 205 ): h.SetBinContent(xBin,yBin, -100)
             if( mX > 1423 and mY < 141 ): h.SetBinContent(xBin,yBin, -100)
@@ -104,9 +119,9 @@ def makePlotsPerYear(year, ifileName, ofile):
 
     inFile = ROOT.TFile(ifileName)
 
-    hSig = inFile.sig_NMSSM_bbbb_MX_700_MY_300_selectionbJets_SignalRegion_HH_kinFit_m_H2_m
+    hSig = inFile.sig_NMSSM_bbbb_MX_700_MY_400_selectionbJets_SignalRegion_HH_kinFit_m_H2_m
     hData = inFile.data_BTagCSV_selectionbJets_SignalRegion_HH_kinFit_m_H2_m
-    hBkg     = inFile.data_BTagCSV_dataDriven_kinFit_selectionbJets_SignalRegion_HH_kinFit_m_H2_m 
+    hBkg     = inFile.data_BTagCSV_dataDriven_kinFit_selectionbJets_SignalRegion_HH_kinFit_m_H2_m
 
     hSig = DivideBinArea(hSig)
     hData = DivideBinArea(hData)
@@ -115,6 +130,12 @@ def makePlotsPerYear(year, ifileName, ofile):
     hSig = lowStatsBinCut(hSig)
     hData = lowStatsBinCut(hData)
     hBkg = lowStatsBinCut(hBkg)
+    # hSig.Add(hBkg)
+    hTemp =hBkg.Clone("hTemp")
+    hTemp = getNoneZeroBins(hTemp)
+    hSig.Add(hTemp)
+    hData.Add(hTemp)
+
 
     rootplot_2Dhist(hData, year, "tag",
                     "Data distribution",
