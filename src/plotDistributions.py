@@ -59,7 +59,7 @@ def rootplot_2Dhist(h1, year, tag, descriptionLabel, saveName, ofile):
     plotlabels.SetTextSize(20)
     # mXval = sig.split("MX_")[1].split("_MY_")[0]
     # mYval = sig.split("MX_")[1].split("_MY_")[1]
-    if("Sig" in saveName): plotlabels.DrawLatexNDC(0.2, 0.82,"m_{{Xreco}} = {0} GeV, m_{{Yreco}} = {1} GeV".format(700, 400))
+    if("Sig" in saveName): plotlabels.DrawLatexNDC(0.2, 0.82,"m_{{X}} = {0} GeV, m_{{Y}} = {1} GeV".format(700, 400))
 
     plotlabels.SetTextFont(63)
     plotlabels.SetTextSize(20)

@@ -200,19 +200,23 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down ):
     #  CMSlabel.DrawTextNDC(0.7, 0.85, "CMS Internal")
     CMSlabel.SetTextFont(63)
     CMSlabel.SetTextSize( 34 )
-    CMSlabel.DrawLatexNDC(0.12, 0.93, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}")
+    # CMSlabel.DrawLatexNDC(0.12, 0.93, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}")
+    CMSlabel.DrawLatexNDC(0.12, 0.93, "CMS")
 
     plotlabels = TLatex()
     plotlabels.SetTextFont(63)
-    plotlabels.SetTextSize(20)
+    plotlabels.SetTextSize(24)
     #  labelText = "mX = %.0f GeV, mY = %.0f GeV"%(mXval,mYval)
     labelText = ""
+    if "SR" in region:    labelText = labelText + "Signal Region"
     if "VR" in region:    labelText = labelText + "Validation Region"
     if "CR" in region:    labelText = labelText + "Control Region"
-    plotlabels.DrawLatexNDC(0.65, 0.93, labelText)
+    plotlabels.DrawLatexNDC(0.3, 0.83, labelText)
     plotlabels.SetTextFont(73)
     plotlabels.SetTextSize(28)
-    plotlabels.DrawTextNDC(0.84, 0.93, year)
+    if "2016" in year: plotlabels.DrawLatexNDC(0.70, 0.93, year + ", #bf{#it{36.3 fb^{-1}}}")
+    if "2017" in year: plotlabels.DrawLatexNDC(0.70, 0.93, year + ", #bf{#it{41.5 fb^{-1}}}")
+    if "2018" in year: plotlabels.DrawLatexNDC(0.70, 0.93, year + ", #bf{#it{59.7 fb^{-1}}}")
 
     ##### ##### #####
     hErrors = h2.Clone("hErrors")
@@ -260,13 +264,15 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down ):
     hdummy2.SetMarkerStyle(22) # marker style (20 = filled circle) that can be resized
     hdummy2.SetMarkerSize(0.9)
     hdummy2.SetMarkerColor(1)
-    leg = TLegend(0.3,0.62,0.55,0.86)
+    hdummy2.SetLineColor(ROOT.kAzure+2)
+    hdummy2.SetLineWidth(2)
+    leg = TLegend(0.3,0.62,0.55,0.82)
     leg.AddEntry(h1, "3b data (bkg. model)", "l")
-    leg.AddEntry(hdummy2, "4b data (target)", "p")
+    leg.AddEntry(hdummy2, "4b data (target)", "ple")
     if (var == "HH_kinFit_m"): modelUnc =  "3b data unc. (stat+shape+norm)"
     else:  modelUnc =  "3b data unc. (stat+shape+norm+non-closure)"
     leg.AddEntry(h3, modelUnc, "f")
-    leg.AddEntry(h4, "4b data unc. (stat)", "le")
+    # leg.AddEntry(h4, "4b data unc. (stat)", "le")
     #  leg.AddEntry(h1, "3b ttbar", "l")
     #  leg.AddEntry(h2, "4b ttbar", "l")
     # leg.AddEntry(h1, "3b Signal MC", "l")
@@ -317,7 +323,8 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down ):
     if not (os.path.exists(odir)): os.makedirs(odir)
     #  odirpng = odir + "/png"
     #  if not (os.path.exists(odirpng)): os.makedirs(odirpng)
-    c1.SaveAs("%s/%s_%s_%s.pdf"%( odir   , var, tag, year ))
+    if "SR" in region: c1.SaveAs("%s/%s_%s_%s.pdf"%( odir   , var, tag, year ))
+    else: c1.SaveAs("%s/%s_%s_%s_%s.pdf"%( odir   , var, tag, year, region ))
     #  c1.SaveAs("%s/%s_%s.png"%( odirpng, var, tag ))
 
 def makeplotsForRegion(dir_region, region, odir, year, ifileTag):
@@ -386,9 +393,9 @@ years = ["2016","2017","2018"]
 # ##################################################
 # for data
 # directories = ["selectionbJets_ControlRegionBlinded", "selectionbJets_ValidationRegionBlinded", "selectionbJets_SignalRegion"]
-directories = ["selectionbJets_SignalRegion"]
+directories = ["selectionbJets_SignalRegion", "selectionbJets_ValidationRegionBlinded"]
 # regionTag = ["CR", "VR", "SR"]
-regionTag = ["SR"]
+regionTag = ["SR", "VR"]
 # directories = ["selectionbJets_ControlRegionBlinded", "selectionbJets_ValidationRegionBlinded"]
 # regionTag = ["CR", "VR"]
 # Old event selections:
