@@ -287,9 +287,15 @@ void Plot2DLimitMap(TString tag, std::string year, std::string option = "syst", 
         auto CMSlabel = new TLatex();
         CMSlabel->SetTextFont(63);
         CMSlabel->SetTextSize( 30 );
-        CMSlabel->DrawLatexNDC(0.16, 0.96, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}");
+        // CMSlabel->DrawLatexNDC(0.16, 0.96, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}");
+        CMSlabel->DrawLatexNDC(0.16, 0.96, "CMS");
 
-        
+
+        CMSlabel->SetTextFont(43);
+        CMSlabel->SetTextSize(20);
+        TString yearLabel="138 fb^{-1} (13 TeV)";
+        CMSlabel->DrawLatexNDC(0.62, 0.96, yearLabel);
+
         auto legend = new TLegend(0.2,0.83,0.52,0.93);
         legend->AddEntry(theoryContour,"#splitline{Limit below maximally allowed values}{in NMSSM, given by LHC Higgs WG}","f");
         legend->SetBorderSize(0);

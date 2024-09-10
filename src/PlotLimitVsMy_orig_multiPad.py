@@ -132,7 +132,7 @@ for apad, theMass in enumerate(massList):
     elif (apad<3):
         theGraph2sigma.GetYaxis().SetRangeUser(5e0, 5e3)
         theGraph2sigma.GetXaxis().SetRangeUser(51.,1900.)
-    else: 
+    else:
         theGraph2sigma.GetYaxis().SetRangeUser(5e-1,1.e3)
         theGraph2sigma.GetXaxis().SetRangeUser(50.,1900.)
     theGraph2sigma.GetYaxis().SetTitleFont(62)
@@ -176,7 +176,7 @@ for apad, theMass in enumerate(massList):
     plotlabels.SetTextSize(16)
     if ((apad)%3==0):
         plotlabels.DrawLatexNDC(0.35, 0.80, "m_{{{0}reco}} = {1} GeV".format(massXY, theMass))
-    else: 
+    else:
         plotlabels.DrawLatexNDC(0.2, 0.80, "m_{{{0}reco}} = {1} GeV".format(massXY, theMass))
 
 ptotal.cd()
@@ -185,11 +185,12 @@ ptotal.cd()
 CMSlabel = TLatex()
 CMSlabel.SetTextFont(63)
 CMSlabel.SetTextSize( 30 )
-CMSlabel.DrawLatexNDC(0.15, 0.95, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}")
+# CMSlabel.DrawLatexNDC(0.15, 0.95, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}")
+CMSlabel.DrawLatexNDC(0.15, 0.95, "CMS")
 
 if("RunII" in args.year): yearLabel="138 fb^{-1} (13 TeV)"
 else: yearLabel = args.year
-plotlabels.SetTextFont(63)
+plotlabels.SetTextFont(43)
 plotlabels.SetTextSize(20)
 plotlabels.SetTextAlign(31)
 plotlabels.DrawLatexNDC(0.94, 0.95, yearLabel)

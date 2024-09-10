@@ -212,11 +212,11 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down ):
     if "VR" in region:    labelText = labelText + "Validation Region"
     if "CR" in region:    labelText = labelText + "Control Region"
     plotlabels.DrawLatexNDC(0.3, 0.83, labelText)
-    plotlabels.SetTextFont(73)
+    plotlabels.SetTextFont(43)
     plotlabels.SetTextSize(28)
-    if "2016" in year: plotlabels.DrawLatexNDC(0.70, 0.93, year + ", #bf{#it{36.3 fb^{-1}}}")
-    if "2017" in year: plotlabels.DrawLatexNDC(0.70, 0.93, year + ", #bf{#it{41.5 fb^{-1}}}")
-    if "2018" in year: plotlabels.DrawLatexNDC(0.70, 0.93, year + ", #bf{#it{59.7 fb^{-1}}}")
+    if "2016" in year: plotlabels.DrawLatexNDC(0.60, 0.93, year + ", 36.3 fb^{-1} (13 TeV)")
+    if "2017" in year: plotlabels.DrawLatexNDC(0.60, 0.93, year + ", 41.5 fb^{-1} (13 TeV)")
+    if "2018" in year: plotlabels.DrawLatexNDC(0.60, 0.93, year + ", 59.7 fb^{-1} (13 TeV)")
 
     ##### ##### #####
     hErrors = h2.Clone("hErrors")

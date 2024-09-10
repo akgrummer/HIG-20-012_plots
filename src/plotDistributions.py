@@ -48,7 +48,8 @@ def rootplot_2Dhist(h1, year, tag, descriptionLabel, saveName, ofile):
     CMSlabel = TLatex()
     CMSlabel.SetTextFont(63)
     CMSlabel.SetTextSize( 30 )
-    CMSlabel.DrawLatexNDC(0.16, 0.96, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}")
+    # CMSlabel.DrawLatexNDC(0.16, 0.96, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}")
+    CMSlabel.DrawLatexNDC(0.16, 0.96, "CMS")
     plotlabels = TLatex()
 
     plotlabels.SetTextFont(53)
@@ -66,9 +67,12 @@ def rootplot_2Dhist(h1, year, tag, descriptionLabel, saveName, ofile):
     labelText = "Signal Region"
     plotlabels.DrawLatexNDC(0.2, 0.9, labelText)
 
-    plotlabels.SetTextFont(73)
+    plotlabels.SetTextFont(43)
     plotlabels.SetTextSize(25)
-    plotlabels.DrawTextNDC(0.7, 0.96, year)
+    # plotlabels.DrawTextNDC(0.7, 0.96, year)
+    if "2016" in year: plotlabels.DrawLatexNDC(0.50, 0.96, year + ", 36.3 fb^{-1} (13 TeV)")
+    if "2017" in year: plotlabels.DrawLatexNDC(0.50, 0.96, year + ", 41.5 fb^{-1} (13 TeV)")
+    if "2018" in year: plotlabels.DrawLatexNDC(0.50, 0.96, year + ", 59.7 fb^{-1} (13 TeV)")
 
     odir = "results/"
     if not os.path.isdir(odir):
