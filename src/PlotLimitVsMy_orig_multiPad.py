@@ -56,24 +56,23 @@ margins2 = [ 0.01,0.02,0.20,0.05 ] #left,right,bottom,top
 # LeftMargin=0.10
 LeftMargin=0.20
 margins3 = [ LeftMargin,0.02,0.20,0.05 ] #left,right,bottom,top
-start = [0.08, 0.75]
-startXMargin1=start[0]+0.04
-startXMargin2=start[0]+0.018
-offsetX = 0.29
-offsetX1 = offsetX+LeftMargin
+start = [0.04, 0.75]
+startXMargin1=start[0]+0.045
+startXMargin2=start[0]+0.021
+offsetX = 0.31
 offsetY = 0.20
-p1  = createPad(  "p1", start[0],           start[1],         startXMargin1+offsetX    , start[1]+offsetY  , margins3 ) # xlow, ylow, xup, yup
-p2  = createPad(  "p2", startXMargin1+offsetX,   start[1],         startXMargin2+offsetX*2  , start[1]+offsetY  , margins2 ) # xlow, ylow, xup, yup
-p3  = createPad(  "p3", startXMargin2+offsetX*2, start[1],         start[0]+offsetX*3  , start[1]+offsetY  , margins2 ) # xlow, ylow, xup, yup
-p4  = createPad(  "p4", start[0],           start[1]-offsetY, startXMargin1+offsetX    , start[1]          , margins3 ) # xlow, ylow, xup, yup
-p5  = createPad(  "p5", startXMargin1+offsetX,   start[1]-offsetY, startXMargin2+offsetX*2  , start[1]          , margins2 ) # xlow, ylow, xup, yup
-p6  = createPad(  "p6", startXMargin2+offsetX*2, start[1]-offsetY, start[0]+offsetX*3  , start[1]          , margins2 ) # xlow, ylow, xup, yup
-p7  = createPad(  "p7", start[0],           start[1]-offsetY*2, startXMargin1+offsetX  , start[1]-offsetY, margins3 ) # xlow, ylow, xup, yup
-p8  = createPad(  "p8", startXMargin1+offsetX,   start[1]-offsetY*2, startXMargin2+offsetX*2, start[1]-offsetY, margins2 ) # xlow, ylow, xup, yup
-p9  = createPad(  "p9", startXMargin2+offsetX*2, start[1]-offsetY*2, start[0]+offsetX*3, start[1]-offsetY, margins2 ) # xlow, ylow, xup, yup
-p10  = createPad(  "p10", start[0],           start[1]-offsetY*3, startXMargin1+offsetX  , start[1]-offsetY*2, margins3 ) # xlow, ylow, xup, yup
-p11  = createPad(  "p11", startXMargin1+offsetX,   start[1]-offsetY*3, startXMargin2+offsetX*2, start[1]-offsetY*2, margins2 ) # xlow, ylow, xup, yup
-p12  = createPad(  "p12", startXMargin2+offsetX*2, start[1]-offsetY*3, start[0]+offsetX*3, start[1]-offsetY*2, margins2 ) # xlow, ylow, xup, yup
+p1   = createPad(  "p1",  start[0],                start[1],           startXMargin1+offsetX    , start[1]+offsetY  , margins3 ) # xlow, ylow, xup, yup
+p2   = createPad(  "p2",  startXMargin1+offsetX,   start[1],           startXMargin2+offsetX*2  , start[1]+offsetY  , margins2 ) # xlow, ylow, xup, yup
+p3   = createPad(  "p3",  startXMargin2+offsetX*2, start[1],           start[0]+offsetX*3       , start[1]+offsetY  , margins2 ) # xlow, ylow, xup, yup
+p4   = createPad(  "p4",  start[0],                start[1]-offsetY,   startXMargin1+offsetX    , start[1]          , margins3 ) # xlow, ylow, xup, yup
+p5   = createPad(  "p5",  startXMargin1+offsetX,   start[1]-offsetY,   startXMargin2+offsetX*2  , start[1]          , margins2 ) # xlow, ylow, xup, yup
+p6   = createPad(  "p6",  startXMargin2+offsetX*2, start[1]-offsetY,   start[0]+offsetX*3       , start[1]          , margins2 ) # xlow, ylow, xup, yup
+p7   = createPad(  "p7",  start[0],                start[1]-offsetY*2, startXMargin1+offsetX    , start[1]-offsetY  , margins3 ) # xlow, ylow, xup, yup
+p8   = createPad(  "p8",  startXMargin1+offsetX,   start[1]-offsetY*2, startXMargin2+offsetX*2  , start[1]-offsetY  , margins2 ) # xlow, ylow, xup, yup
+p9   = createPad(  "p9",  startXMargin2+offsetX*2, start[1]-offsetY*2, start[0]+offsetX*3       , start[1]-offsetY  , margins2 ) # xlow, ylow, xup, yup
+p10  = createPad(  "p10", start[0],                start[1]-offsetY*3, startXMargin1+offsetX    , start[1]-offsetY*2, margins3 ) # xlow, ylow, xup, yup
+p11  = createPad(  "p11", startXMargin1+offsetX,   start[1]-offsetY*3, startXMargin2+offsetX*2  , start[1]-offsetY*2, margins2 ) # xlow, ylow, xup, yup
+p12  = createPad(  "p12", startXMargin2+offsetX*2, start[1]-offsetY*3, start[0]+offsetX*3       , start[1]-offsetY*2, margins2 ) # xlow, ylow, xup, yup
 ptotal  = createPad(  "ptotal", 0.0, 0.00, 1., 1., margins ) # xlow, ylow, xup, yup
 ptotal.SetFillStyle(4000)
 # p4  = createPad(  "p4", 0.00, 0.50, 0.33, 0.75, margins2 ) # xlow, ylow, xup, yup
@@ -115,15 +114,16 @@ for apad, theMass in enumerate(massList):
     inputGraph2sigmaName = "Limits_{0}/Option_{1}/2SigmaLimit_{0}_{1}_mass{2}_{3}".format(args.year, append, massXY, theMass)
     theGraph2sigma = inputFile.Get(inputGraph2sigmaName)
     theGraph2sigma.SetTitle("")
-    theGraph2sigma.GetXaxis().SetTitle("m_{%sreco} [GeV]"%(othermassXY))
-    theGraph2sigma.GetXaxis().SetLabelFont(62)
+    theGraph2sigma.GetXaxis().SetTitle("m_{%s} [GeV]"%(othermassXY))
+    theGraph2sigma.GetXaxis().SetLabelFont(42)
     theGraph2sigma.GetXaxis().SetLabelSize(0.08)
-    theGraph2sigma.GetXaxis().SetTitleFont(62)
-    theGraph2sigma.GetXaxis().SetTitleSize(0.07)
+    theGraph2sigma.GetXaxis().SetTitleFont(42)
+    # theGraph2sigma.GetXaxis().SetTitleSize(0.07)
+    theGraph2sigma.GetXaxis().SetTitleSize(0.)
     theGraph2sigma.GetXaxis().SetTitleOffset(1.1)
     theGraph2sigma.GetXaxis().SetNdivisions(310)
     theGraph2sigma.GetXaxis().SetTickLength(0.04)
-    theGraph2sigma.GetYaxis().SetLabelFont(62)
+    theGraph2sigma.GetYaxis().SetLabelFont(42)
     if ((apad)%3==0): theGraph2sigma.GetYaxis().SetLabelSize(0.08)
     else: theGraph2sigma.GetYaxis().SetLabelSize(0.)
     if (apad==0):
@@ -135,18 +135,21 @@ for apad, theMass in enumerate(massList):
     else:
         theGraph2sigma.GetYaxis().SetRangeUser(5e-1,1.e3)
         theGraph2sigma.GetXaxis().SetRangeUser(50.,1900.)
-    theGraph2sigma.GetYaxis().SetTitleFont(62)
-    theGraph2sigma.GetYaxis().SetTitleSize(0.07)
+    theGraph2sigma.GetYaxis().SetTitleFont(42)
+    # theGraph2sigma.GetYaxis().SetTitleSize(0.07)
+    theGraph2sigma.GetYaxis().SetTitleSize(0.)
     theGraph2sigma.GetYaxis().SetTitleOffset(1.1)
     # theGraph2sigma.GetYaxis().SetTitle("#sigma(pp #rightarrow X) #times BR(Y(b#bar{b}) H(b#bar{b})) [fb]")
     theGraph2sigma.GetYaxis().SetTitle("#sigma #times BR(YH) [fb]")
-    theGraph2sigma.SetTitle("m_{%sreco} = %i GeV"%(massXY,theMass))
+    theGraph2sigma.SetTitle("m_{%s} = %i GeV"%(massXY,theMass))
     theGraph2sigma.SetFillColor(color2sig)
+    theGraph2sigma.SetLineWidth(0)
     theGraph2sigma.Draw("a3")
 
     inputGraph1sigmaName = "Limits_{0}/Option_{1}/1SigmaLimit_{0}_{1}_mass{2}_{3}".format(args.year, append, massXY, theMass)
     theGraph1sigma = inputFile.Get(inputGraph1sigmaName)
     theGraph1sigma.SetFillColor(color1sig)
+    theGraph1sigma.SetLineWidth(0)
     theGraph1sigma.Draw("same 3")
 
     inputGraphName = "Limits_{0}/Option_{1}/CentralLimit_{0}_{1}_mass{2}_{3}".format(args.year, append, massXY, theMass)
@@ -175,9 +178,9 @@ for apad, theMass in enumerate(massList):
     plotlabels.SetTextFont(43)
     plotlabels.SetTextSize(16)
     if ((apad)%3==0):
-        plotlabels.DrawLatexNDC(0.35, 0.80, "m_{{{0}reco}} = {1} GeV".format(massXY, theMass))
+        plotlabels.DrawLatexNDC(0.35, 0.80, "m_{{{0}}} = {1} GeV".format(massXY, theMass))
     else:
-        plotlabels.DrawLatexNDC(0.2, 0.80, "m_{{{0}reco}} = {1} GeV".format(massXY, theMass))
+        plotlabels.DrawLatexNDC(0.2, 0.80, "m_{{{0}}} = {1} GeV".format(massXY, theMass))
 
 ptotal.cd()
 
@@ -186,20 +189,22 @@ CMSlabel = TLatex()
 CMSlabel.SetTextFont(63)
 CMSlabel.SetTextSize( 30 )
 # CMSlabel.DrawLatexNDC(0.15, 0.95, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}")
-CMSlabel.DrawLatexNDC(0.15, 0.95, "CMS")
+CMSlabel.DrawLatexNDC(0.12, 0.95, "CMS")
 
 if("RunII" in args.year): yearLabel="138 fb^{-1} (13 TeV)"
 else: yearLabel = args.year
 plotlabels.SetTextFont(43)
 plotlabels.SetTextSize(20)
 plotlabels.SetTextAlign(31)
-plotlabels.DrawLatexNDC(0.94, 0.95, yearLabel)
+plotlabels.DrawLatexNDC(0.965, 0.95, yearLabel)
 plotlabels.SetTextAlign(11)
 
 theLegend  = TLegend( 0.12,0.01,0.9,0.1 )
 theLegend.SetNColumns(2);
-theLegend.AddEntry(theGraph1sigma, "Expected limit #pm1 #sigma", "f" )
-theLegend.AddEntry(theGraph2sigma, "Expected limit #pm2 #sigma", "f" )
+# theLegend.AddEntry(theGraph1sigma, "Expected limit #pm1 #sigma", "f" )
+# theLegend.AddEntry(theGraph2sigma, "Expected limit #pm2 #sigma", "f" )
+theLegend.AddEntry(theGraph1sigma, "68% expected", "f" )
+theLegend.AddEntry(theGraph2sigma, "95% expected", "f" )
 theLegend.AddEntry(theGraph, "Expected 95% upper limit", "l")
 if (args.unblind): theLegend.AddEntry(theGraphObserved, "Observed 95% upper limit", "l")
 theLegend.SetBorderSize(0) # remove the border
@@ -210,17 +215,18 @@ theLegend.SetFillStyle(0) # make the legend background transparent
 theLegend.Draw("same")
 
 theCanvas.cd()
-plotlabels.SetTextFont(63)
+plotlabels.SetTextFont(43)
 plotlabels.SetTextSize(18)
 plotlabels.SetTextAlign(31)
-xpos=0.94
-plotlabels.DrawLatexNDC(xpos - 0.03, 0.11, "m_{Yreco} [GeV]")
-arrow = TArrow(0.14,0.14,xpos,0.14,0.02,"|>");
+xpos=0.97
+plotlabels.DrawLatexNDC(xpos - 0.03, 0.11, "m_{Y} [GeV]")
+arrow = TArrow(0.11,0.14,xpos,0.14,0.02,"|>");
 arrow.SetLineWidth(2);
 arrow.Draw();
 plotlabels.SetTextAngle(90.);
 ypos=0.94
-plotlabels.DrawLatexNDC(0.04, ypos - 0.03, "#sigma(pp #rightarrow X) #times BR(Y(b#bar{b}) H(b#bar{b})) [fb]")
+# plotlabels.DrawLatexNDC(0.04, ypos - 0.03, "#sigma(pp #rightarrow X) #times BR(Y(b#bar{b}) H(b#bar{b})) [fb]")
+plotlabels.DrawLatexNDC(0.04, ypos - 0.03, "#sigma(pp #rightarrow X) #times BR(X #rightarrow YH #rightarrow b#bar{b}b#bar{b}) [fb]")
 arrow.DrawArrow(0.06,0.19,0.06,ypos,0.02,"|>");
 
 

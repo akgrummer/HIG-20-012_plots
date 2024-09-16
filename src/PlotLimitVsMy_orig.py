@@ -59,15 +59,16 @@ for theMass in massList:
     theGraph2sigma = inputFile.Get(inputGraph2sigmaName)
     theGraph2sigma.SetTitle("")
     theGraph2sigma.GetXaxis().SetTitle("m_{%sreco} [GeV]"%(othermassXY))
-    theGraph2sigma.GetXaxis().SetLabelFont(62)
+    theGraph2sigma.GetXaxis().SetLabelFont(42)
     theGraph2sigma.GetXaxis().SetLabelSize(0.045)
-    theGraph2sigma.GetXaxis().SetTitleFont(62)
+    theGraph2sigma.GetXaxis().SetTitleFont(42)
     theGraph2sigma.GetXaxis().SetTitleSize(0.045)
-    theGraph2sigma.GetYaxis().SetLabelFont(62)
+    theGraph2sigma.GetYaxis().SetLabelFont(42)
     theGraph2sigma.GetYaxis().SetLabelSize(0.045)
-    theGraph2sigma.GetYaxis().SetTitleFont(62)
+    theGraph2sigma.GetYaxis().SetTitleFont(42)
     theGraph2sigma.GetYaxis().SetTitleSize(0.045)
-    theGraph2sigma.GetYaxis().SetTitle("#sigma(pp #rightarrow X) #times BR(H(b#bar{b}) H(b#bar{b})) [fb]")
+    # theGraph2sigma.GetYaxis().SetTitle("#sigma(pp #rightarrow X) #times BR(H(b#bar{b}) H(b#bar{b})) [fb]")
+    theGraph2sigma.GetYaxis().SetTitle("#sigma(pp #rightarrow X) #times BR(X #rightarrow HH #rightarrow b#bar{b}b#bar{b}) [fb]")
     theGraph2sigma.GetYaxis().SetRangeUser(5e-1,1.e5)
     theGraph2sigma.GetXaxis().SetRangeUser(50.,1900.)
     theGraph2sigma.SetTitle("m_{%s} = %i GeV"%(massXY,theMass))
@@ -90,13 +91,13 @@ for theMass in massList:
     theGraph.SetMarkerSize(0.7)
     theGraph.Draw("same l")
 
-    ATLASn = 5
-    ATLASx = array('d', [ 400, 500, 600, 800, 1000 ])
-    ATLASy = array('d', [ 89.33, 30.52, 15.38, 5.39, 2.71 ])
-    ATLASgraph = TGraph(ATLASn,ATLASx,ATLASy)
-    ATLASgraph.SetMarkerStyle(26)
-    ATLASgraph.SetMarkerColor(ROOT.kBlack)
-    ATLASgraph.Draw("same p")
+    # ATLASn = 5
+    # ATLASx = array('d', [ 400, 500, 600, 800, 1000 ])
+    # ATLASy = array('d', [ 89.33, 30.52, 15.38, 5.39, 2.71 ])
+    # ATLASgraph = TGraph(ATLASn,ATLASx,ATLASy)
+    # ATLASgraph.SetMarkerStyle(26)
+    # ATLASgraph.SetMarkerColor(ROOT.kBlack)
+    # ATLASgraph.Draw("same p")
 
     for i in range(theGraph.GetN()):
         print("x: ", theGraph.GetPointX(i), "y:", theGraph.GetPointY(i) )
@@ -126,7 +127,7 @@ for theMass in massList:
     plotlabels.SetTextFont(43)
     plotlabels.SetTextSize(20)
     if("RunII" in args.year): yearLabel="138 fb^{-1} (13 TeV)"
-    plotlabels.DrawLatexNDC(0.76, 0.96, yearLabel)
+    plotlabels.DrawLatexNDC(0.773, 0.96, yearLabel)
 
 
     theLegend  = TLegend(0.2,0.7,0.5,0.88)
@@ -134,7 +135,7 @@ for theMass in massList:
     if (args.unblind): theLegend.AddEntry(theGraphObserved, "Observed 95% upper limit", "l")
     theLegend.AddEntry(theGraph1sigma, "Expected limit #pm1 #sigma", "f" )
     theLegend.AddEntry(theGraph2sigma, "Expected limit #pm2 #sigma", "f" )
-    theLegend.AddEntry(ATLASgraph, "ATLAS Expected Estimate", "p" )
+    # theLegend.AddEntry(ATLASgraph, "ATLAS Expected Estimate", "p" )
     theLegend.SetBorderSize(0) # remove the border
     theLegend.SetLineColor(0)
     theLegend.SetFillColor(0)

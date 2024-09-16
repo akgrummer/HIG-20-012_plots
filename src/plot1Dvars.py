@@ -164,24 +164,24 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down ):
     # hshape2.GetXaxis().SetLabelSize(0.)
     # hshape2.GetXaxis().SetTitleSize(0.)
     #yaxis
-    if var == "HH_kinFit_m" or var == "H2_m": h1.GetYaxis().SetTitle(varInfo[var]['YaxisTitle'] + "/bin")
+    if var == "HH_kinFit_m" or var == "H2_m": h1.GetYaxis().SetTitle(varInfo[var]['YaxisTitle'] + " / GeV")
     else: h1.GetYaxis().SetTitle(varInfo[var]['YaxisTitle'])
-    h1.GetYaxis().SetLabelFont(62)
+    h1.GetYaxis().SetLabelFont(42)
     h1.GetYaxis().SetLabelSize(0.05)
-    h1.GetYaxis().SetTitleFont(63)
+    h1.GetYaxis().SetTitleFont(43)
     h1.GetYaxis().SetTitleSize(30)
     h1.GetYaxis().SetTitleOffset(1.3)
     h1.GetYaxis().SetTickLength(0.02)
-    if var == "HH_kinFit_m" or var == "H2_m": h2.GetYaxis().SetTitle(varInfo[var]['YaxisTitle']+"/bin")
+    if var == "HH_kinFit_m" or var == "H2_m": h2.GetYaxis().SetTitle(varInfo[var]['YaxisTitle']+" / GeV")
     else: h2.GetYaxis().SetTitle(varInfo[var]['YaxisTitle'])
-    h2.GetYaxis().SetLabelFont(62)
+    h2.GetYaxis().SetLabelFont(42)
     h2.GetYaxis().SetLabelSize(0.05)
-    h2.GetYaxis().SetTitleFont(63)
+    h2.GetYaxis().SetTitleFont(43)
     h2.GetYaxis().SetTitleSize(30)
     h2.GetYaxis().SetTitleOffset(1.3)
     h2.GetYaxis().SetTickLength(0.02)
     #  if h2.GetMaximum()>h1.GetMaximum():
-    yrangeFactor = 1.3
+    yrangeFactor = 1.4
     if var == "HH_kinFit_m": yrangeFactor = 1.57
     #  h1.GetYaxis().SetRangeUser(0,np.max( [ h1.GetMaximum(), h2.GetMaximum(), href.GetMaximum() ] )*yrangeFactor)
     h1.GetYaxis().SetRangeUser(0,np.max( [ h2.GetMaximum()] )*yrangeFactor)
@@ -201,7 +201,7 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down ):
     CMSlabel.SetTextFont(63)
     CMSlabel.SetTextSize( 34 )
     # CMSlabel.DrawLatexNDC(0.12, 0.93, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}")
-    CMSlabel.DrawLatexNDC(0.12, 0.93, "CMS")
+    CMSlabel.DrawLatexNDC(0.16, 0.82, "CMS")
 
     plotlabels = TLatex()
     plotlabels.SetTextFont(63)
@@ -211,12 +211,12 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down ):
     if "SR" in region:    labelText = labelText + "Signal Region"
     if "VR" in region:    labelText = labelText + "Validation Region"
     if "CR" in region:    labelText = labelText + "Control Region"
-    plotlabels.DrawLatexNDC(0.3, 0.83, labelText)
+    plotlabels.DrawLatexNDC(0.68, 0.83, labelText)
     plotlabels.SetTextFont(43)
     plotlabels.SetTextSize(28)
-    if "2016" in year: plotlabels.DrawLatexNDC(0.60, 0.93, year + ", 36.3 fb^{-1} (13 TeV)")
-    if "2017" in year: plotlabels.DrawLatexNDC(0.60, 0.93, year + ", 41.5 fb^{-1} (13 TeV)")
-    if "2018" in year: plotlabels.DrawLatexNDC(0.60, 0.93, year + ", 59.7 fb^{-1} (13 TeV)")
+    if "2016" in year: plotlabels.DrawLatexNDC(0.70, 0.93, "36.3 fb^{-1} (13 TeV)")
+    if "2017" in year: plotlabels.DrawLatexNDC(0.70, 0.93, "41.5 fb^{-1} (13 TeV)")
+    if "2018" in year: plotlabels.DrawLatexNDC(0.70, 0.93, "59.7 fb^{-1} (13 TeV)")
 
     ##### ##### #####
     hErrors = h2.Clone("hErrors")
@@ -266,12 +266,20 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down ):
     hdummy2.SetMarkerColor(1)
     hdummy2.SetLineColor(ROOT.kAzure+2)
     hdummy2.SetLineWidth(2)
-    leg = TLegend(0.3,0.62,0.55,0.82)
-    leg.AddEntry(h1, "3b data (bkg. model)", "l")
-    leg.AddEntry(hdummy2, "4b data (target)", "ple")
-    if (var == "HH_kinFit_m"): modelUnc =  "3b data unc. (stat+shape+norm)"
-    else:  modelUnc =  "3b data unc. (stat+shape+norm+non-closure)"
-    leg.AddEntry(h3, modelUnc, "f")
+
+    hdummy1 = h3.Clone("h3refcopy")
+    hdummy1.SetLineWidth(2)
+    hdummy1.SetMarkerStyle(20) # marker style (20 = filled circle) that can be resized
+    hdummy1.SetMarkerSize(0.)
+    hdummy1.SetMarkerColor(1)
+    hdummy1.SetLineColor(kRed+2)
+    hdummy1.SetFillColor(ROOT.kRed-6)
+    leg = TLegend(0.70,0.68,0.9,0.82)
+    leg.AddEntry(hdummy1, "Bkg. Model", "lf")
+    leg.AddEntry(hdummy2, "Data", "ple")
+    # if (var == "HH_kinFit_m"): modelUnc =  "3b data unc. (stat+shape+norm)"
+    # else:  modelUnc =  "3b data unc. (stat+shape+norm+non-closure)"
+    # leg.AddEntry(h3, modelUnc, "f")
     # leg.AddEntry(h4, "4b data unc. (stat)", "le")
     #  leg.AddEntry(h1, "3b ttbar", "l")
     #  leg.AddEntry(h2, "4b ttbar", "l")
@@ -304,21 +312,21 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down ):
     #  h4.GetYaxis().SetRangeUser(varInfo[var]['xlowRatioRange'],varInfo[var]['xhighRatioRange'])
     hErrors.GetYaxis().SetRangeUser(0.5, 1.5)
     h4.GetYaxis().SetRangeUser(0.5, 1.5)
-    hErrors.GetXaxis().SetLabelFont(62)
+    hErrors.GetXaxis().SetLabelFont(42)
     hErrors.GetXaxis().SetLabelSize(0.15)
     hErrors.GetXaxis().SetLabelOffset(0.05)
     hErrors.GetYaxis().SetLabelSize(0.12)
     hErrors.GetYaxis().SetNdivisions(503)
     hErrors.GetXaxis().SetTickLength(0.1)
-    hErrors.GetXaxis().SetTitleFont(63)
+    hErrors.GetXaxis().SetTitleFont(43)
     hErrors.GetXaxis().SetTitleSize(28)
     hErrors.GetXaxis().SetTitleOffset(1.1)
     hErrors.GetXaxis().SetTitle(varInfo[var]['XaxisTitle'])
     hErrors.GetYaxis().SetTickLength(0.03)
-    hErrors.GetYaxis().SetTitleFont(63)
+    hErrors.GetYaxis().SetTitleFont(43)
     hErrors.GetYaxis().SetTitleSize(20)
     hErrors.GetYaxis().SetTitleOffset(1.6)
-    hErrors.GetYaxis().SetTitle("target / model")
+    hErrors.GetYaxis().SetTitle("data / bkg.")
     odir = odir + "/" + region
     if not (os.path.exists(odir)): os.makedirs(odir)
     #  odirpng = odir + "/png"
