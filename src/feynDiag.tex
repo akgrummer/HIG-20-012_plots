@@ -1,0 +1,97 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% author: Aidan Grummer
+% adapted from examples found in:
+% https://osksn2.hep.sci.osaka-u.ac.jp/~taku/osx/feynmp/fmfsamples.pdf
+% https://ctan.mirrors.hoobly.com/macros/latex/contrib/feynmf/fmfman.pdf
+% https://www.overleaf.com/learn/latex/Feynman_diagrams#An_overview_of_using_the_feynmf-based_packages
+%
+% compiled in overleaf
+% using PDFlatex compiler and TEX Live version 2024
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[margin=10mm]{standalone}
+% \usepackage[compat=1.0.0]{tikz-feynman}
+\usepackage{feynmp-auto}
+\begin{document}
+
+% it was helpful to draw the diagram on paper before starting
+% goal was to label leftmost verices with i (incoming) and
+% rightmost vertices with o (outgoing)
+% internal vertices alphabetically: a, b, c and so on
+\begin{fmffile}{simple_box}
+% must have the start in fmfgraph* to render the labels
+\begin{fmfgraph*}(240,110)
+    \fmfstraight
+    % define left (incoming) 'external' vertices
+    \fmfleft{i1,i2}
+    % define right (outgoing) 'external' vertices
+    \fmfright{o1,o2,o3,o4}
+    % define top and bottom vertices
+    \fmftop{p2}
+    \fmfbottom{p1}
+    % set positions of the external vertices
+    \fmfforce{(0,0.15h)}{i1}
+    \fmfforce{(0,0.85h)}{i2}
+    \fmfforce{(0.4w,0)}{p1}
+    \fmfforce{(0.4w,h)}{p2}
+    % set labels and label positions of external vertices
+    \fmfv{label.dist=5,label.angle=180,label=$p$}{i1}
+    \fmfv{label.dist=5,label.angle=180,label=$p$}{i2}
+    \fmfv{label.dist=5,label.angle=0,label=$\bar{b}$}{o1}
+    \fmfv{label.dist=5,label.angle=0,label=$b$}{o2}
+    \fmfv{label.dist=5,label.angle=0,label=$\bar{b}$}{o3}
+    \fmfv{label.dist=5,label.angle=0,label=$b$}{o4}
+
+
+    % protons (center lines)
+    \fmf{fermion,tension=2}{i1,a1}
+    \fmf{fermion,tension=2}{i2,a2}
+    % invisible line to help with positioning
+    \fmf{phantom,tension=-0.3}{a1,a2}
+    % add gluons with labels
+    \fmf{gluon,label.dist=10,label=$g$}{a1,b1}
+    \fmf{gluon,label.dist=10,label=$g$}{a2,b1}
+    % label.angle did not work for particle line labels
+    % \fmf{gluon,label.dist=10,label=$g$,label.angle=0}{a2,b1}
+
+    % outgoing proton, added extra vertex to help with massage alignment of
+    % the three proton lines (see code at end)
+    % note labels can have quote mark <'> in them
+    \fmf{plain,tension=10}{a2,a2'}
+    \fmf{plain,tension=10}{a1,a1'}
+    \fmf{plain,tension=1}{a2',p2}
+    \fmf{plain,tension=1}{a1',p1}
+
+    % new boson lines
+    \fmf{dashes,lab=$X$,tension=2}{b1,c1}
+
+    % connection to external vertices had to be done first (before connecting
+    % the X to YH
+    \fmf{fermion}{o3,d1,o4}
+    \fmf{fermion}{o1,d2,o2}
+    \fmf{dashes,lab=$Y$,tension=1.2}{c1,d1}
+    \fmf{dashes,lab=$H$,tension=1.2}{c1,d2}
+
+    % add the filled circles after all the lines were established
+    \fmfblob{.09w}{a1}
+    \fmfblob{.09w}{a2}
+    \fmfblob{.09w}{b1}
+
+    % freeze the diagram before adding the 2nd and 3rd lines to the incoming
+    % and outgoing protons
+    \fmffreeze
+
+    \fmfi{plain}{vpath (__i1,__a1) shifted (thick*(0,2))}
+    \fmfi{plain}{vpath (__i1,__a1) shifted (thick*(0,-2))}
+    \fmfi{plain}{vpath (__i2,__a2) shifted (thick*(0,2))}
+    \fmfi{plain}{vpath (__i2,__a2) shifted (thick*(0,-2))}
+    \fmfi{plain}{vpath (__a1',__p1) shifted (thick*(0,2))}
+    \fmfi{plain}{vpath (__a1',__p1) shifted (thick*(0,-2))}
+    \fmfi{plain}{vpath (__a2',__p2) shifted (thick*(0,2))}
+    \fmfi{plain}{vpath (__a2',__p2) shifted (thick*(0,-2))}
+
+\end{fmfgraph*}
+\end{fmffile}
+
+\end{document}
+
+
