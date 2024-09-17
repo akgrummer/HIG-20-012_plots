@@ -294,9 +294,9 @@ void Plot2DLimitMap(TString tag, std::string year, std::string option = "syst", 
 
 
         CMSlabel->SetTextFont(43);
-        CMSlabel->SetTextSize(20);
+        CMSlabel->SetTextSize(25);
         TString yearLabel="138 fb^{-1} (13 TeV)";
-        CMSlabel->DrawLatexNDC(0.62, 0.96, yearLabel);
+        CMSlabel->DrawLatexNDC(0.585, 0.96, yearLabel);
 
         auto legend = new TLegend(0.2,0.73,0.52,0.83);
         legend->AddEntry(theoryContour,"#splitline{Limit below maximally}{allowed values in NMSSM}","f");
