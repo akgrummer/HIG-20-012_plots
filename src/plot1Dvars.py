@@ -9,7 +9,7 @@ from VariableDicts import varInfo
 import sys
 import math
 
-def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down ):
+def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hsig1, hsig2, hsig3 ):
 
     h4 = h2.Clone("h4")
 
@@ -136,10 +136,26 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down ):
     gr1.SetMarkerColor(1);
     gr1.SetMarkerSize(0.);
     gr1.SetMarkerStyle(20);
+
+    h1sig.SetLineColor(kGreen+2);
+    h1sig.SetLineWidth(2);
+    h1sig.SetMarkerSize(0)
+
+    h2sig.SetLineColor(kMagenta+2);
+    h2sig.SetLineWidth(2);
+    h2sig.SetMarkerSize(0)
+
+    h3sig.SetLineColor(kCyan+2);
+    h3sig.SetLineWidth(2);
+    h3sig.SetMarkerSize(0)
+
     h1.Draw("hist")
     gr1.Draw("2")
     h1.Draw("hist same")
     h2.Draw("same")
+    h1sig.Draw("same")
+    h2sig.Draw("same")
+    h3sig.Draw("same")
     # hshape1.Draw("hist same")
     # hshape2.Draw("hist same")
     #xaxis
@@ -350,10 +366,17 @@ def makeplotsForRegion(dir_region, region, odir, year, ifileTag):
     dir_QCD = "QCD"
     #  varname = "_HH_kinFit_m_H2_m"
 
-    dir_sig_MX_600_MY_400 = "sig_NMSSM_bbbb_MX_600_MY_400" # signal
-    dir_sig_MX_300_MY_60 = "sig_NMSSM_bbbb_MX_300_MY_60" # signal
-    dir_sig_MX_300_MY_150 = "sig_NMSSM_bbbb_MX_300_MY_150" # signal
-    dir_sig_3b_weights = "sig_NMSSM_bbbb_MX_600_MY_400_3bScaled"
+    # dir_sig_MX_600_MY_400 = "sig_NMSSM_bbbb_MX_600_MY_400" # signal
+    # dir_sig_MX_300_MY_60 = "sig_NMSSM_bbbb_MX_300_MY_60" # signal
+    # dir_sig_MX_300_MY_150 = "sig_NMSSM_bbbb_MX_300_MY_150" # signal
+    # dir_sig_3b_weights = "sig_NMSSM_bbbb_MX_600_MY_400_3bScaled"
+    dir_sig_MX_400_MY_125 =   "sig_NMSSM_bbbb_MX_400_MY_125"
+    dir_sig_MX_600_MY_400  =  "sig_NMSSM_bbbb_MX_600_MY_400"
+    dir_sig_MX_700_MY_300  =  "sig_NMSSM_bbbb_MX_700_MY_300"
+    dir_sig_MX_700_MY_60  =   "sig_NMSSM_bbbb_MX_700_MY_60"
+    dir_sig_MX_900_MY_600  =  "sig_NMSSM_bbbb_MX_900_MY_600"
+    dir_sig_MX_1200_MY_300 =  "sig_NMSSM_bbbb_MX_1200_MY_300"
+    dir_sig_MX_1600_MY_200 =  "sig_NMSSM_bbbb_MX_1600_MY_200"
     #  varlist = [ "H1_b1_ptRegressed", "H1_b2_ptRegressed", "H1_b1_kinFit_ptRegressed", "H1_b2_kinFit_ptRegressed", "H2_b1_ptRegressed", "H2_b2_ptRegressed", "H1_b1_deepCSV", "H1_b2_deepCSV", "H2_b1_deepCSV", "H2_b2_deepCSV", "H1_pt", "H1_kinFit_pt", "H2_pt", "HH_m", "HH_kinFit_m", "HH_pt", "HH_kinFit_pt", "H1_m", "H2_m", "H1_eta", "H1_kinFit_eta", "H2_eta", "H1_bb_DeltaR", "H1_kinFit_bb_DeltaR", "H2_bb_DeltaR", "H1_H2_sphericity", "FourBjet_sphericity", "distanceFromDiagonal" ]
     # varlist = [ "H1_b1_kinFit_ptRegressed", "H1_b2_kinFit_ptRegressed", "H2_b1_ptRegressed", "H2_b2_ptRegressed", "H1_kinFit_pt", "H2_pt", "HH_kinFit_m", "HH_kinFit_pt", "H2_m", "H1_kinFit_eta", "H2_eta", "H1_kinFit_bb_DeltaR", "H2_bb_DeltaR", "distanceFromDiagonal" ]
     #  "H1_kinFit_m",
@@ -377,7 +400,17 @@ def makeplotsForRegion(dir_region, region, odir, year, ifileTag):
         h_3b_weights_down = gDirectory.Get(dir_data_3b_weights_down+"_"+dir_region+"_"+varname)
         myfile.cd(dir_data_4b+"/"+dir_region)
         h_4b = gDirectory.Get(dir_data_4b+"_"+dir_region+"_"+varname)
-        rootplot_2samp_ratio( h_3b_weights, h_4b, year, region, varname, "weights", odir, h_3b_weights_up, h_3b_weights_down )
+        myfile.cd(dir_sig_MX_400_MY_125+"/"+dir_region)
+        hsig2  = gDirectory.Get(dir_sig_MX_400_MY_125+"_"+dir_region+"_"+varname)
+        myfile.cd(dir_sig_MX_1600_MY_200+"/"+dir_region)
+        hsig3  = gDirectory.Get(dir_sig_MX_1600_MY_200+"_"+dir_region+"_"+varname)
+        ### get signal hists:
+        if ("SR" in region):
+            myfileSig1 = TFile.Open("hists/paperHists.root")
+            hsig1_2D = myfileSig1.Get("sig_NMSSM_bbbb_MX_700_MY_400_selectionbJets_SignalRegion_HH_kinFit_m_H2_m")
+            if ("H2" in varname): hsig1 = hsig1_2D.ProjectionY("hsig1", 0,-1)
+            else: hsig1 = hsig1_2D.ProjectionX("hsig1", 0,-1)
+        rootplot_2samp_ratio( h_3b_weights, h_4b, year, region, varname, "weights", odir, h_3b_weights_up, h_3b_weights_down,hsig1,hsig2,hsig3 )
 ##################################################
 
 # ********************
