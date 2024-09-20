@@ -49,7 +49,7 @@ def rootplot_2Dhist(h1, year, tag, descriptionLabel, saveName, ofile):
     CMSlabel = TLatex()
     CMSlabel.SetTextFont(63)
     CMSlabel.SetTextSize( 34 )
-    if ("Signal" in descriptionLabel): CMSlabel.DrawLatexNDC(0.2, 0.88, "CMS #scale[0.8]{#it{#bf{Preliminary Simulation}}}")
+    if ("Signal" in descriptionLabel): CMSlabel.DrawLatexNDC(0.2, 0.88, "CMS #scale[0.85]{#it{#bf{Preliminary Simulation}}}")
     else:  CMSlabel.DrawLatexNDC(0.2, 0.88, "CMS #scale[0.85]{#it{#bf{Preliminary}}}")
     # CMSlabel.DrawLatexNDC(0.2, 0.88, "CMS")
     plotlabels = TLatex()
