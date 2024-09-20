@@ -68,7 +68,7 @@ for theMass in massList:
     theGraph2sigma.GetYaxis().SetTitleFont(42)
     theGraph2sigma.GetYaxis().SetTitleSize(0.045)
     # theGraph2sigma.GetYaxis().SetTitle("#sigma(pp #rightarrow X) #times BR(H(b#bar{b}) H(b#bar{b})) [fb]")
-    theGraph2sigma.GetYaxis().SetTitle("#sigma(pp #rightarrow X) #times BR(X #rightarrow HH #rightarrow b#bar{b}b#bar{b}) [fb]")
+    theGraph2sigma.GetYaxis().SetTitle("#sigma(pp #rightarrow X)B(X #rightarrow HH #rightarrow b#bar{b}b#bar{b}) [fb]")
     theGraph2sigma.GetYaxis().SetRangeUser(5e-1,1.e5)
     theGraph2sigma.GetXaxis().SetRangeUser(50.,1900.)
     theGraph2sigma.SetTitle("m_{%s} = %i GeV"%(massXY,theMass))
@@ -119,8 +119,8 @@ for theMass in massList:
     CMSlabel = TLatex()
     CMSlabel.SetTextFont(63)
     CMSlabel.SetTextSize( 30 )
-    # CMSlabel.DrawLatexNDC(0.16, 0.96, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}")
-    CMSlabel.DrawLatexNDC(0.22, 0.88, "CMS")
+    CMSlabel.DrawLatexNDC(0.22, 0.88, "CMS #scale[0.85]{#it{#bf{Preliminary}}}")
+    # CMSlabel.DrawLatexNDC(0.22, 0.88, "CMS")
 
     plotlabels = TLatex()
     # plotlabels.SetTextFont(63)
@@ -133,8 +133,8 @@ for theMass in massList:
 
 
     theLegend  = TLegend(0.2,0.7,0.5,0.86)
-    theLegend.AddEntry(theGraph, "Expected 95% upper limit", "l")
-    if (args.unblind): theLegend.AddEntry(theGraphObserved, "Observed 95% upper limit", "l")
+    theLegend.AddEntry(theGraph, "Expected 95% CL upper limit", "l")
+    if (args.unblind): theLegend.AddEntry(theGraphObserved, "Observed 95% CL upper limit", "l")
     theLegend.AddEntry(theGraph1sigma, "68% expected", "f" )
     theLegend.AddEntry(theGraph2sigma, "95% expected", "f" )
     # theLegend.AddEntry(ATLASgraph, "ATLAS Expected Estimate", "p" )

@@ -194,8 +194,8 @@ ptotal.cd()
 CMSlabel = TLatex()
 CMSlabel.SetTextFont(63)
 CMSlabel.SetTextSize( 30 )
-# CMSlabel.DrawLatexNDC(0.15, 0.95, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}")
-CMSlabel.DrawLatexNDC(0.12, 0.95, "CMS")
+CMSlabel.DrawLatexNDC(0.12, 0.95, "CMS #scale[0.85]{#it{#bf{Preliminary}}}")
+# CMSlabel.DrawLatexNDC(0.12, 0.95, "CMS")
 
 if("RunII" in args.year): yearLabel="138 fb^{-1} (13 TeV)"
 else: yearLabel = args.year
@@ -205,14 +205,14 @@ plotlabels.SetTextAlign(31)
 plotlabels.DrawLatexNDC(0.965, 0.95, yearLabel)
 plotlabels.SetTextAlign(11)
 
-theLegend  = TLegend( 0.12,0.01,0.9,0.1 )
+theLegend  = TLegend( 0.10,0.01,0.96,0.1 )
 theLegend.SetNColumns(2);
 # theLegend.AddEntry(theGraph1sigma, "Expected limit #pm1 #sigma", "f" )
 # theLegend.AddEntry(theGraph2sigma, "Expected limit #pm2 #sigma", "f" )
 theLegend.AddEntry(theGraph1sigma, "68% expected", "f" )
 theLegend.AddEntry(theGraph2sigma, "95% expected", "f" )
-theLegend.AddEntry(theGraph, "Expected 95% upper limit", "l")
-if (args.unblind): theLegend.AddEntry(theGraphObserved, "Observed 95% upper limit", "l")
+theLegend.AddEntry(theGraph, "Expected 95% CL upper limit", "l")
+if (args.unblind): theLegend.AddEntry(theGraphObserved, "Observed 95% CL upper limit", "l")
 theLegend.SetBorderSize(0) # remove the border
 theLegend.SetLineColor(0)
 theLegend.SetFillColor(0)
@@ -232,7 +232,7 @@ arrow.Draw();
 plotlabels.SetTextAngle(90.);
 ypos=0.94
 # plotlabels.DrawLatexNDC(0.04, ypos - 0.03, "#sigma(pp #rightarrow X) #times BR(Y(b#bar{b}) H(b#bar{b})) [fb]")
-plotlabels.DrawLatexNDC(0.04, ypos - 0.03, "#sigma(pp #rightarrow X) #times BR(X #rightarrow YH #rightarrow b#bar{b}b#bar{b}) [fb]")
+plotlabels.DrawLatexNDC(0.04, ypos - 0.03, "#sigma(pp #rightarrow X)B(X #rightarrow YH #rightarrow b#bar{b}b#bar{b}) [fb]")
 arrow.DrawArrow(0.06,0.19,0.06,ypos,0.02,"|>");
 
 

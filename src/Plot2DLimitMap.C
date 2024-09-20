@@ -289,8 +289,8 @@ void Plot2DLimitMap(TString tag, std::string year, std::string option = "syst", 
         auto CMSlabel = new TLatex();
         CMSlabel->SetTextFont(63);
         CMSlabel->SetTextSize( 30 );
-        // CMSlabel->DrawLatexNDC(0.16, 0.96, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}");
-        CMSlabel->DrawLatexNDC(0.22, 0.88, "CMS");
+        CMSlabel->DrawLatexNDC(0.22, 0.88, "CMS #scale[0.85]{#it{#bf{Preliminary}}}");
+        // CMSlabel->DrawLatexNDC(0.22, 0.88, "CMS");
 
 
         CMSlabel->SetTextFont(43);

@@ -120,10 +120,10 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
     p1.cd()
     h1.SetLineColor(kRed+2)
     h1.SetLineWidth(2)
-    h2.SetLineColor(ROOT.kAzure+2)
+    h2.SetLineColor(ROOT.kBlack)
     h2.SetLineWidth(2)
     h2.SetMarkerStyle(22)
-    h2.SetMarkerSize(0.6)
+    h2.SetMarkerSize(0.9)
     h2.SetMarkerColor(1)
     # hshape1.SetLineColor(1)
     # hshape1.SetLineWidth(2)
@@ -148,7 +148,7 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
         hsig2.SetLineWidth(2);
         hsig2.SetMarkerSize(0)
 
-        hsig3.SetLineColor(ROOT.kBlack);
+        hsig3.SetLineColor(ROOT.kAzure+2);
         hsig3.SetLineStyle(3);
         hsig3.SetLineWidth(2);
         hsig3.SetMarkerSize(0)
@@ -221,8 +221,8 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
     #  CMSlabel.DrawTextNDC(0.7, 0.85, "CMS Internal")
     CMSlabel.SetTextFont(63)
     CMSlabel.SetTextSize( 34 )
-    # CMSlabel.DrawLatexNDC(0.12, 0.93, "CMS #scale[0.8]{#it{#bf{Work In Progress}}}")
-    CMSlabel.DrawLatexNDC(0.16, 0.82, "CMS")
+    CMSlabel.DrawLatexNDC(0.16, 0.82, "CMS #scale[0.85]{#it{#bf{Preliminary}}}")
+    # CMSlabel.DrawLatexNDC(0.16, 0.82, "CMS")
 
     plotlabels = TLatex()
     plotlabels.SetTextFont(63)
@@ -255,14 +255,14 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
     #     h4.SetBinContent(i,1)
     #     #  print(h1.GetBinError(i))
     hErrors.SetMarkerStyle(20) # marker style (20 = filled circle) that can be resized
-    hErrors.SetMarkerSize(0.4)
+    hErrors.SetMarkerSize(0.8)
     hErrors.SetMarkerColor(1)
     hErrors.SetLineColor(1)
     hErrors.SetLineWidth(0)
     h4.SetMarkerStyle(20) # marker style (20 = filled circle) that can be resized
     h4.SetMarkerSize(0.4)
     h4.SetMarkerColor(1)
-    h4.SetLineColor(ROOT.kAzure+2)
+    h4.SetLineColor(ROOT.kBlack)
     h4.SetLineWidth(2)
     # h4.SetFillColor(ROOT.kRed+1)
     # h4.SetLineColor(17)
@@ -288,7 +288,7 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
     hdummy2.SetMarkerStyle(22) # marker style (20 = filled circle) that can be resized
     hdummy2.SetMarkerSize(0.9)
     hdummy2.SetMarkerColor(1)
-    hdummy2.SetLineColor(ROOT.kAzure+2)
+    hdummy2.SetLineColor(ROOT.kBlack)
     hdummy2.SetLineWidth(2)
 
     hdummy1 = h3.Clone("h3refcopy")
@@ -300,7 +300,7 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
     hdummy1.SetFillColor(ROOT.kRed-6)
     if ("SR" in region): leg = TLegend(0.52,0.68,0.72,0.82)
     else: leg = TLegend(0.65,0.68,0.85,0.82)
-    leg.AddEntry(hdummy1, "Bkg. Model", "lf")
+    leg.AddEntry(hdummy1, "Bkg. model", "lf")
     leg.AddEntry(hdummy2, "Data", "ple")
     # if (var == "HH_kinFit_m"): modelUnc =  "3b data unc. (stat+shape+norm)"
     # else:  modelUnc =  "3b data unc. (stat+shape+norm+non-closure)"
@@ -320,9 +320,9 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
     if ("SR" in region):
         leg2 = TLegend(0.52,0.44,0.72,0.68)
         leg2.SetHeader("Signal mass hypothesis [m_{X}, m_{Y}]")
-        leg2.AddEntry(hsig1, "[700, 400] GeV (#sigma #times1000)", "l")
-        leg2.AddEntry(hsig2, "[900, 600] GeV (#sigma #times1000)", "l")
-        leg2.AddEntry(hsig3, "[1600, 200] GeV (#sigma #times5000)", "l")
+        leg2.AddEntry(hsig1, "[700, 400] GeV (#sigma = 10 pb)", "l")
+        leg2.AddEntry(hsig2, "[900, 600] GeV (#sigma = 10 pb)", "l")
+        leg2.AddEntry(hsig3, "[1600, 200] GeV (#sigma = 5 pb)", "l")
         leg2.SetBorderSize(0) # remove the border
         leg2.SetLineColor(0)
         leg2.SetFillColor(0)
@@ -364,7 +364,7 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
     hErrors.GetYaxis().SetTitleFont(43)
     hErrors.GetYaxis().SetTitleSize(20)
     hErrors.GetYaxis().SetTitleOffset(1.6)
-    hErrors.GetYaxis().SetTitle("data / bkg.")
+    hErrors.GetYaxis().SetTitle("Data / bkg.")
     odir = odir + "/" + region
     if not (os.path.exists(odir)): os.makedirs(odir)
     #  odirpng = odir + "/png"
@@ -427,7 +427,7 @@ def makeplotsForRegion(dir_region, region, odir, year, ifileTag):
         hsig2  = gDirectory.Get(dir_sig_MX_900_MY_600+"_"+dir_region+"_"+varname)
         for i in range(hsig2.GetSize()):
             hsig2.SetBinContent(i, hsig2.GetBinContent(i)/hsig2.GetBinWidth(i))
-        hsig2.Scale(1000)
+        hsig2.Scale(500)
         myfile.cd(dir_sig_MX_1600_MY_200+"/"+dir_region)
         hsig3  = gDirectory.Get(dir_sig_MX_1600_MY_200+"_"+dir_region+"_"+varname)
         for i in range(hsig3.GetSize()):
@@ -435,12 +435,12 @@ def makeplotsForRegion(dir_region, region, odir, year, ifileTag):
         hsig3.Scale(5000)
         ### get signal hists:
         myfileSig1 = TFile.Open("input/paperHists.root")
-        hsig1_2D = myfileSig1.Get("sig_NMSSM_bbbb_MX_700_MY_400_selectionbJets_SignalRegion_HH_kinFit_m_H2_m")
+        hsig1_2D = myfileSig1.Get("sig_NMSSM_bbbb_MX_700_MY_400_selectionbJets_SignalRegion_HH_kinFit_m_H2_m_"+year)
         if ("H2" in varname): hsig1 = hsig1_2D.ProjectionY("hsig1", 0,-1)
         else: hsig1 = hsig1_2D.ProjectionX("hsig1", 0,-1)
         for i in range(hsig1.GetSize()):
             hsig1.SetBinContent(i, hsig1.GetBinContent(i)/hsig1.GetBinWidth(i))
-        hsig1.Scale(1000)
+        hsig1.Scale(500)
         ##################
         rootplot_2samp_ratio( h_3b_weights, h_4b, year, region, varname, "weights", odir, h_3b_weights_up, h_3b_weights_down,hsig1,hsig2,hsig3 )
 ##################################################
