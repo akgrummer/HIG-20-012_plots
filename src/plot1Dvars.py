@@ -137,25 +137,30 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
     gr1.SetMarkerSize(0.);
     gr1.SetMarkerStyle(20);
 
-    h1sig.SetLineColor(kGreen+2);
-    h1sig.SetLineWidth(2);
-    h1sig.SetMarkerSize(0)
+    if ("SR" in region):
+        hsig1.SetLineColor(ROOT.kGreen+2);
+        hsig1.SetLineStyle(1);
+        hsig1.SetLineWidth(2);
+        hsig1.SetMarkerSize(0)
 
-    h2sig.SetLineColor(kMagenta+2);
-    h2sig.SetLineWidth(2);
-    h2sig.SetMarkerSize(0)
+        hsig2.SetLineColor(ROOT.kMagenta+2);
+        hsig2.SetLineStyle(4);
+        hsig2.SetLineWidth(2);
+        hsig2.SetMarkerSize(0)
 
-    h3sig.SetLineColor(kCyan+2);
-    h3sig.SetLineWidth(2);
-    h3sig.SetMarkerSize(0)
+        hsig3.SetLineColor(ROOT.kBlack);
+        hsig3.SetLineStyle(3);
+        hsig3.SetLineWidth(2);
+        hsig3.SetMarkerSize(0)
 
     h1.Draw("hist")
     gr1.Draw("2")
     h1.Draw("hist same")
     h2.Draw("same")
-    h1sig.Draw("same")
-    h2sig.Draw("same")
-    h3sig.Draw("same")
+    if ("SR" in region):
+        hsig1.Draw("hist same")
+        hsig2.Draw("hist same")
+        hsig3.Draw("hist same")
     # hshape1.Draw("hist same")
     # hshape2.Draw("hist same")
     #xaxis
@@ -224,10 +229,13 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
     plotlabels.SetTextSize(24)
     #  labelText = "mX = %.0f GeV, mY = %.0f GeV"%(mXval,mYval)
     labelText = ""
-    if "SR" in region:    labelText = labelText + "Signal Region"
-    if "VR" in region:    labelText = labelText + "Validation Region"
-    if "CR" in region:    labelText = labelText + "Control Region"
-    plotlabels.DrawLatexNDC(0.68, 0.83, labelText)
+    if "SR" in region:
+        labelText = labelText + "Signal Region"
+        plotlabels.DrawLatexNDC(0.50, 0.83, labelText)
+    if "VR" in region:
+        labelText = labelText + "Validation Region"
+        plotlabels.DrawLatexNDC(0.63, 0.83, labelText)
+
     plotlabels.SetTextFont(43)
     plotlabels.SetTextSize(28)
     if "2016" in year: plotlabels.DrawLatexNDC(0.70, 0.93, "36.3 fb^{-1} (13 TeV)")
@@ -290,7 +298,8 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
     hdummy1.SetMarkerColor(1)
     hdummy1.SetLineColor(kRed+2)
     hdummy1.SetFillColor(ROOT.kRed-6)
-    leg = TLegend(0.70,0.68,0.9,0.82)
+    if ("SR" in region): leg = TLegend(0.52,0.68,0.72,0.82)
+    else: leg = TLegend(0.65,0.68,0.85,0.82)
     leg.AddEntry(hdummy1, "Bkg. Model", "lf")
     leg.AddEntry(hdummy2, "Data", "ple")
     # if (var == "HH_kinFit_m"): modelUnc =  "3b data unc. (stat+shape+norm)"
@@ -307,6 +316,19 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
     leg.SetTextSize(0.05)
     leg.SetFillStyle(0) # make the legend background transparent
     leg.Draw()
+
+    if ("SR" in region):
+        leg2 = TLegend(0.52,0.44,0.72,0.68)
+        leg2.SetHeader("Signal mass hypothesis [m_{X}, m_{Y}]")
+        leg2.AddEntry(hsig1, "[700, 400] GeV (#sigma #times1000)", "l")
+        leg2.AddEntry(hsig2, "[900, 600] GeV (#sigma #times1000)", "l")
+        leg2.AddEntry(hsig3, "[1600, 200] GeV (#sigma #times5000)", "l")
+        leg2.SetBorderSize(0) # remove the border
+        leg2.SetLineColor(0)
+        leg2.SetFillColor(0)
+        leg2.SetTextSize(0.05)
+        leg2.SetFillStyle(0) # make the legend background transparent
+        leg2.Draw()
 
     #### draw the ratio hist in lower pad
     p2.cd()
@@ -400,16 +422,26 @@ def makeplotsForRegion(dir_region, region, odir, year, ifileTag):
         h_3b_weights_down = gDirectory.Get(dir_data_3b_weights_down+"_"+dir_region+"_"+varname)
         myfile.cd(dir_data_4b+"/"+dir_region)
         h_4b = gDirectory.Get(dir_data_4b+"_"+dir_region+"_"+varname)
-        myfile.cd(dir_sig_MX_400_MY_125+"/"+dir_region)
-        hsig2  = gDirectory.Get(dir_sig_MX_400_MY_125+"_"+dir_region+"_"+varname)
+        myfile.cd(dir_sig_MX_900_MY_600+"/"+dir_region)
+        # signals
+        hsig2  = gDirectory.Get(dir_sig_MX_900_MY_600+"_"+dir_region+"_"+varname)
+        for i in range(hsig2.GetSize()):
+            hsig2.SetBinContent(i, hsig2.GetBinContent(i)/hsig2.GetBinWidth(i))
+        hsig2.Scale(1000)
         myfile.cd(dir_sig_MX_1600_MY_200+"/"+dir_region)
         hsig3  = gDirectory.Get(dir_sig_MX_1600_MY_200+"_"+dir_region+"_"+varname)
+        for i in range(hsig3.GetSize()):
+            hsig3.SetBinContent(i, hsig3.GetBinContent(i)/hsig3.GetBinWidth(i))
+        hsig3.Scale(5000)
         ### get signal hists:
-        if ("SR" in region):
-            myfileSig1 = TFile.Open("hists/paperHists.root")
-            hsig1_2D = myfileSig1.Get("sig_NMSSM_bbbb_MX_700_MY_400_selectionbJets_SignalRegion_HH_kinFit_m_H2_m")
-            if ("H2" in varname): hsig1 = hsig1_2D.ProjectionY("hsig1", 0,-1)
-            else: hsig1 = hsig1_2D.ProjectionX("hsig1", 0,-1)
+        myfileSig1 = TFile.Open("input/paperHists.root")
+        hsig1_2D = myfileSig1.Get("sig_NMSSM_bbbb_MX_700_MY_400_selectionbJets_SignalRegion_HH_kinFit_m_H2_m")
+        if ("H2" in varname): hsig1 = hsig1_2D.ProjectionY("hsig1", 0,-1)
+        else: hsig1 = hsig1_2D.ProjectionX("hsig1", 0,-1)
+        for i in range(hsig1.GetSize()):
+            hsig1.SetBinContent(i, hsig1.GetBinContent(i)/hsig1.GetBinWidth(i))
+        hsig1.Scale(1000)
+        ##################
         rootplot_2samp_ratio( h_3b_weights, h_4b, year, region, varname, "weights", odir, h_3b_weights_up, h_3b_weights_down,hsig1,hsig2,hsig3 )
 ##################################################
 

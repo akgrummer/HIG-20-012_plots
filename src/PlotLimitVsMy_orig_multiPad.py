@@ -162,6 +162,9 @@ for apad, theMass in enumerate(massList):
     theGraph.SetMarkerStyle(22)
     theGraph.SetMarkerSize(0.7)
     theGraph.Draw("same l")
+    print(theMass)
+    print("expected")
+    theGraph.Print("all")
 
     inputGraphName = "Limits_{0}/Option_{1}/ObservedLimit_{0}_{1}_mass{2}_{3}".format(args.year, append, massXY, theMass)
     theGraphObserved = inputFile.Get(inputGraphName)
@@ -171,7 +174,10 @@ for apad, theMass in enumerate(massList):
     theGraphObserved.SetLineWidth(2)
     theGraphObserved.SetMarkerStyle(20)
     theGraphObserved.SetMarkerSize(0.7)
-    if (args.unblind): theGraphObserved.Draw("same l")
+    if (args.unblind):
+        theGraphObserved.Draw("same l")
+        print("observed")
+        theGraphObserved.Print("all")
 
 
     plotlabels = TLatex()
