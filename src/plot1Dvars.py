@@ -320,8 +320,8 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
     if ("SR" in region):
         leg2 = TLegend(0.52,0.44,0.72,0.68)
         leg2.SetHeader("Signal mass hypothesis [m_{X}, m_{Y}]")
-        leg2.AddEntry(hsig1, "[700, 400] GeV (#sigma = 10 pb)", "l")
-        leg2.AddEntry(hsig2, "[900, 600] GeV (#sigma = 10 pb)", "l")
+        leg2.AddEntry(hsig1, "[700, 400] GeV (#sigma = 5 pb)", "l")
+        leg2.AddEntry(hsig2, "[900, 600] GeV (#sigma = 5 pb)", "l")
         leg2.AddEntry(hsig3, "[1600, 200] GeV (#sigma = 5 pb)", "l")
         leg2.SetBorderSize(0) # remove the border
         leg2.SetLineColor(0)

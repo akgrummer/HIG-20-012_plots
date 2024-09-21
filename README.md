@@ -35,5 +35,8 @@ python3 src/plotDistributions.py --year 2018
 ./run/theoryComparison.sh
 
 
+./run/createNMSSMrootfile.sh
+
+
 
 

@@ -129,7 +129,7 @@ void Plot2DLimitMap(TString tag, std::string year, std::string option = "syst", 
     limitMap->GetZaxis()->SetLabelSize(0.035);
     limitMap->GetZaxis()->SetTitleFont(42);
     limitMap->GetZaxis()->SetTitleSize(0.045);
-    limitMap->GetZaxis()->SetTitle("#sigma(pp #rightarrow X) #times BR(X #rightarrow YH #rightarrow b#bar{b}b#bar{b}) [fb]");
+    limitMap->GetZaxis()->SetTitle("#sigma(pp #rightarrow X)B(X #rightarrow YH #rightarrow b#bar{b}b#bar{b}) [fb]");
     limitMap->SetMinimum(1.);
     // limitMap->SetMaximum(2000.);
     limitMap->SetMaximum(900.);
@@ -187,11 +187,23 @@ void Plot2DLimitMap(TString tag, std::string year, std::string option = "syst", 
 
         /* std::string inputTheoryFileName = "/uscms/home/fravera/nobackup/DiHiggs_v1/CMSSW_10_2_5/src/bbbbAnalysis/HXSG_NMSSM_recommendations_00.root"; */
         /* std::string inputTheoryFileName = "/uscms/home/fravera/nobackup/DiHiggs_v1/CMSSW_10_2_5/src/bbbbAnalysis/HXSG_NMSSM_recommendations_00.root"; */
-        std::string inputTheoryFileName = "input/HXSG_NMSSM_recommendations_00.root";
-        std::string inputTheoryPlotName = "g_bbbb";
+        // std::string inputTheoryFileName = "input/HXSG_NMSSM_recommendations_00.root";
+        // std::string inputTheoryPlotName = "g_bbbb";
+        TString nmssm562file="input/NMSSMdata.root";
 
-        TFile inputTheoryFile(inputTheoryFileName.c_str());
-        TGraphAsymmErrors* theTheoryGraph = (TGraphAsymmErrors*)inputTheoryFile.Get(inputTheoryPlotName.c_str());
+        // TFile inputTheoryFile(inputTheoryFileName.c_str());
+        // TGraphAsymmErrors* theTheoryGraph = (TGraphAsymmErrors*)inputTheoryFile.Get(inputTheoryPlotName.c_str());
+        TFile inputTheoryFile(nmssm562file);
+        TGraph* theTheoryGraph400 = (TGraph*)inputTheoryFile.Get("mX400");
+        TGraph* theTheoryGraph500 = (TGraph*)inputTheoryFile.Get("mX500");
+        TGraph* theTheoryGraph600 = (TGraph*)inputTheoryFile.Get("mX600");
+        TGraph* theTheoryGraph700 = (TGraph*)inputTheoryFile.Get("mX700");
+        TGraph* theTheoryGraph800 = (TGraph*)inputTheoryFile.Get("mX800");
+        TGraph* theTheoryGraph900 = (TGraph*)inputTheoryFile.Get("mX900");
+        TGraph* theTheoryGraph1000 = (TGraph*)inputTheoryFile.Get("mX1000");
+        TGraph* theTheoryGraph1200 = (TGraph*)inputTheoryFile.Get("mX1200");
+        TGraph* theTheoryGraph1400 = (TGraph*)inputTheoryFile.Get("mX1400");
+        TGraph* theTheoryGraph1600 = (TGraph*)inputTheoryFile.Get("mX1600");
 
         // TH2D *theoryContour = new TH2D("theoryContour", "theoryContour", xBinning.size()-1, xBinning.data(), yBinning.size()-1, yBinning.data());
         TH2D *theoryContour = new TH2D("theoryContour", "theoryContour", xOriginalBinning.size()-1, xOriginalBinning.data(), yOriginalBinning.size()-1, yOriginalBinning.data());
@@ -199,16 +211,33 @@ void Plot2DLimitMap(TString tag, std::string year, std::string option = "syst", 
         double contours[4];
         contours[0] = 1000.;
 
+        float theoreticalXsec=0;
         for(int xBin = 1; xBin<=theoryContour->GetNbinsX(); ++xBin)
         {
             float xBinCenter = theoryContour->GetXaxis()->GetBinCenter(xBin);
-            if(xBinCenter<400. || xBinCenter>1000.) continue;
+            if(xBinCenter<400. || xBinCenter>1600.) continue;
             if (xBinCenter==587.50)xBinCenter=600.0;
-            float theoreticalXsec = theTheoryGraph->Eval(xBinCenter) * 1000.;
+            if (xBinCenter==712.5)xBinCenter=700.0;
+            if (xBinCenter==1225.0)xBinCenter=1200.0;
+            std::cout<<"xbincenter: "<< xBinCenter <<std::endl;
+            // float theoreticalXsec = theTheoryGraph->Eval(xBinCenter) * 1000.;
             for(int yBin = 1; yBin<=theoryContour->GetNbinsY(); ++yBin)
             {
                 float yBinCenter = theoryContour->GetYaxis()->GetBinCenter(yBin);
+                if(yBinCenter==125) continue;
                 float limit = limitMap->GetBinContent(limitMap->GetXaxis()->FindBin(xBinCenter), limitMap->GetYaxis()->FindBin(yBinCenter));
+                theoreticalXsec=0;
+                if (xBinCenter==400 ){theoreticalXsec = theTheoryGraph400->Eval(yBinCenter) * 1000.;}
+                else if (xBinCenter==500 ){theoreticalXsec = theTheoryGraph500->Eval(yBinCenter) * 1000.;}
+                else if (xBinCenter==600 ){theoreticalXsec = theTheoryGraph600->Eval(yBinCenter) * 1000.;}
+                else if (xBinCenter==700 ){theoreticalXsec = theTheoryGraph700->Eval(yBinCenter) * 1000.;}
+                else if (xBinCenter==800 ){theoreticalXsec = theTheoryGraph800->Eval(yBinCenter) * 1000.;}
+                else if (xBinCenter==900 ){theoreticalXsec = theTheoryGraph900->Eval(yBinCenter) * 1000.;}
+                else if (xBinCenter==1000 ){theoreticalXsec = theTheoryGraph1000->Eval(yBinCenter) * 1000.;}
+                else if (xBinCenter==1200 ){theoreticalXsec = theTheoryGraph1200->Eval(yBinCenter) * 1000.;}
+                else if (xBinCenter==1400 ){theoreticalXsec = theTheoryGraph1400->Eval(yBinCenter) * 1000.;}
+                else if (xBinCenter==1600 ){theoreticalXsec = theTheoryGraph1600->Eval(yBinCenter) * 1000.;}
+
                 if(limit>0 && limit <= theoreticalXsec)
                 {
                     theoryContour->SetBinContent(xBin, yBin, 1000.);
@@ -298,7 +327,14 @@ void Plot2DLimitMap(TString tag, std::string year, std::string option = "syst", 
         TString yearLabel="138 fb^{-1} (13 TeV)";
         CMSlabel->DrawLatexNDC(0.585, 0.96, yearLabel);
 
-        auto legend = new TLegend(0.2,0.73,0.52,0.83);
+        CMSlabel->SetTextFont(43);
+        CMSlabel->SetTextSize(23);
+        TString expOrObsLabel;
+        if (obsORexp=="Central")expOrObsLabel="Expected limit";
+        if (obsORexp=="Observed")expOrObsLabel="Observed limit";
+        CMSlabel->DrawLatexNDC(0.2, 0.83, expOrObsLabel);
+
+        auto legend = new TLegend(0.2,0.72,0.52,0.82);
         legend->AddEntry(theoryContour,"#splitline{Limit below maximally}{allowed values in NMSSM}","f");
         legend->SetBorderSize(0);
         legend->SetLineColor(0);
