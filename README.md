@@ -1,20 +1,24 @@
 ##  To make plots:
 
-1. 1D distributions:
-python3 src/plot1Dvars.py
-(uses src/VariableDicts.py)
+1. 1D distributions (figures 2 and 3):<br>
+`python3 src/plot1Dvars.py`<br>
+(uses `src/VariableDicts.py`)
 
-2. 2D distributions:
-python3 src/plotDistributions.py --year 2018
+2. 2D distributions (figure 4):<br>
+`python3 src/plotDistributions.py --year 2018`
 
-3. all limits:
-./run/multiPadPlots.sh
+3. all limits (figure 5):<br>
+`./run/multiPadPlots.sh`
 
-4. X->HH limits:
-./run/HHplot.sh
+4. X->HH limits (figure 6):<br>
+`./run/HHplot.sh`
 
-5. 2d limits vs theory:
-./run/theoryComparison.sh
+5. 2d limits vs theory (figure 7):<br>
+`./run/theoryComparison.sh`
+
+and latex source code for figure 1 is in:<br>
+`src/feynDiag.tex`
+(compiled in overleaf)
 
 
 ## to collect HEP data:
@@ -24,7 +28,8 @@ values are saved in hepdata/ directory
 1. 1D distributions (hep data for figures 2 and 3):
 
 in src/plot1Dvars.py set `showAllVals=True` and run as:
-python3 src/plot1Dvars.py
+
+`python3 src/plot1Dvars.py`
 
 2. 2D distributions (hep data for figure 4):
 
@@ -32,11 +37,12 @@ to get the hep data run with
 showAllVals=True
 this also changes min from 6e-6 to 1e-9 - so dont use for the plots
 
-python3 src/plotDistributions.py --year 2018
+`python3 src/plotDistributions.py --year 2018`
 
 3. limits (hep data for figures 5,6,7)
 values are saved using this script now:
-./run/multiPadPlots.sh
+
+`./run/multiPadPlots.sh`
 
 
 ## Some notes on origin of data files
