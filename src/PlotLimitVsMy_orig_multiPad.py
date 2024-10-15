@@ -6,6 +6,35 @@ import os
 import argparse
 import os.path
 from array import array
+import pandas as pd
+
+def getGraphContent(gtemp,name, theMass):
+    centerList    = []
+    valList       = []
+    err_highList  = []
+    err_lowList   = []
+    mXList   = []
+    n = gtemp.GetN()
+    for i in range(n):
+        center    = gtemp.GetPointX(i)
+        val       = gtemp.GetPointY(i)
+        err_high  = gtemp.GetErrorYhigh(i)
+        err_low   = gtemp.GetErrorYlow(i)
+
+        mXList.append(theMass)
+        centerList.append(center)
+        valList.append(val)
+        err_highList.append(err_high)
+        err_lowList.append(err_low)
+
+    dfg = pd.DataFrame({
+        f"{name}_mX": mXList,
+        f"{name}_center": centerList,
+        f"{name}_val": valList,
+        f"{name}_errHigh": err_highList,
+        f"{name}_errLow": err_lowList
+        })
+    return dfg
 
 def createPad(name, xlow, ylow, xup, yup, margins):
     p = TPad(name, name, xlow, ylow, xup, yup, 0, 0, 0)
@@ -162,9 +191,9 @@ for apad, theMass in enumerate(massList):
     theGraph.SetMarkerStyle(22)
     theGraph.SetMarkerSize(0.7)
     theGraph.Draw("same l")
-    print(theMass)
-    print("expected")
-    theGraph.Print("all")
+    # print(theMass)
+    # print("expected")
+    # theGraph.Print("all")
 
     inputGraphName = "Limits_{0}/Option_{1}/ObservedLimit_{0}_{1}_mass{2}_{3}".format(args.year, append, massXY, theMass)
     theGraphObserved = inputFile.Get(inputGraphName)
@@ -176,8 +205,16 @@ for apad, theMass in enumerate(massList):
     theGraphObserved.SetMarkerSize(0.7)
     if (args.unblind):
         theGraphObserved.Draw("same l")
-        print("observed")
-        theGraphObserved.Print("all")
+        # print("observed")
+        # theGraphObserved.Print("all")
+
+    dfC_obs = getGraphContent(theGraphObserved, "obs", theMass)
+    dfC_exp = getGraphContent(theGraph, "exp", theMass)
+    dfC_1sig = getGraphContent(theGraph1sigma, "1Sigma", theMass)
+    dfC_2sig = getGraphContent(theGraph2sigma, "2Sigma", theMass)
+    dfM = pd.concat([dfC_obs, dfC_exp, dfC_1sig, dfC_2sig], axis=1)
+    if (apad != 0): df=pd.concat([df,dfM])
+    else: df = dfM.copy()
 
 
     plotlabels = TLatex()
@@ -187,7 +224,6 @@ for apad, theMass in enumerate(massList):
         plotlabels.DrawLatexNDC(0.35, 0.80, "m_{{{0}}} = {1} GeV".format(massXY, theMass))
     else:
         plotlabels.DrawLatexNDC(0.2, 0.80, "m_{{{0}}} = {1} GeV".format(massXY, theMass))
-
 ptotal.cd()
 
 
@@ -235,6 +271,33 @@ ypos=0.94
 plotlabels.DrawLatexNDC(0.04, ypos - 0.03, "#sigma(pp #rightarrow X)B(X #rightarrow YH #rightarrow b#bar{b}b#bar{b}) [fb]")
 arrow.DrawArrow(0.06,0.19,0.06,ypos,0.02,"|>");
 
+
+# print (df['obs_mX'].equals(df['exp_mX']))
+# print (df['obs_center'].equals(df['exp_center']))
+# print (df['exp_val'].equals(df['1Sigma_val']))
+# print (df['exp_val'].equals(df['2Sigma_val']))
+df = df.drop( [ "obs_errHigh", "obs_errLow", "exp_mX", "exp_center", "exp_errHigh", "exp_errLow",  "1Sigma_mX", "1Sigma_center", "1Sigma_val", "2Sigma_mX", "2Sigma_center", "2Sigma_val"] , axis=1)
+
+df['obs_mX'] = df['obs_mX'].map(lambda x: '%.0f' % x)
+df['obs_center'] = df['obs_center'].map(lambda x: '%.0f' % x)
+df['obs_val'] = df['obs_val'].map(lambda x: '%0.2f' % x)
+df['exp_val'] = df['exp_val'].map(lambda x: '%.2f' % x)
+df['1Sigma_errLow'] = df['1Sigma_errLow'].map(lambda x: '%.2f' % x)
+df['1Sigma_errHigh'] = df['1Sigma_errHigh'].map(lambda x: '%.2f' % x)
+df['2Sigma_errLow'] = df['2Sigma_errLow'].map(lambda x: '%.2f' % x)
+df['2Sigma_errHigh'] = df['2Sigma_errHigh'].map(lambda x: '%0.2f' % x)
+
+df = df.rename(columns={
+    "obs_mX":"mX",
+    "obs_center":"mY",
+    "obs_val":"observed limit",
+    "exp_val":"expected limit",
+    "1Sigma_errLow":"68% below",
+    "1Sigma_errHigh":"68% above",
+    "2Sigma_errLow":"95% below",
+    "2Sigma_errHigh":"95% above",
+    })
+df.to_csv(f"hepdata/limitVals.csv", index=False, float_format='%.4f')
 
 odir = "results/Limits_vsm{0}/".format(massXY)
 if not os.path.isdir(odir):

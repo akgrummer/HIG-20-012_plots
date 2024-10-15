@@ -8,6 +8,44 @@ import sys
 import math
 import argparse
 import csv
+import pandas as pd
+
+def getHistContent(htemp,name):
+
+    lowXlist = []
+    highXlist = []
+    lowYlist = []
+    highYlist = []
+    valList = []
+    nX = htemp.GetXaxis().GetNbins()
+    nY = htemp.GetYaxis().GetNbins()
+    for iX in range(nX):
+        for iY in range(nY):
+            lowX = htemp.GetXaxis().GetBinLowEdge(iX)
+            highX = htemp.GetXaxis().GetBinUpEdge(iX)
+            lowY = htemp.GetYaxis().GetBinLowEdge(iY)
+            highY = htemp.GetYaxis().GetBinUpEdge(iY)
+            val = htemp.GetBinContent(iX,iY)
+            if (val>0 and lowX>=0 and lowY>=0):
+                if (name =="aData"):
+                    lowXlist.append(lowX)
+                    highXlist.append(highX)
+                    lowYlist.append(lowY)
+                    highYlist.append(highY)
+                valList.append(val)
+    if (name =="aData"):
+        dfh = pd.DataFrame({
+            "binXlow": lowXlist,
+            "binXhigh": highXlist,
+            "binYlow": lowYlist,
+            "binYhigh": highYlist,
+            f"{name}_val": valList,
+            })
+    else:
+        dfh = pd.DataFrame({
+            f"{name}_val": valList,
+            })
+    return dfh
 
 def rootplot_2Dhist(h1, year, tag, descriptionLabel, saveName, ofile):
     c1 = TCanvas('c1', 'c1',800,800)
@@ -70,7 +108,7 @@ def rootplot_2Dhist(h1, year, tag, descriptionLabel, saveName, ofile):
     h1.SetMinimum(4e-4)
     if("Sig" in saveName):
         plotlabels.DrawLatexNDC(0.2, 0.78,"m_{{X}} = {0} GeV, m_{{Y}} = {1} GeV".format(700, 400))
-        h1.SetMinimum(6e-6)
+        h1.SetMinimum(minSig)
 
 
     plotlabels.SetTextFont(43)
@@ -80,13 +118,20 @@ def rootplot_2Dhist(h1, year, tag, descriptionLabel, saveName, ofile):
     if "2017" in year: plotlabels.DrawLatexNDC(0.62, 0.96, "41.5 fb^{-1} (13 TeV)")
     if "2018" in year: plotlabels.DrawLatexNDC(0.62, 0.96, "59.7 fb^{-1} (13 TeV)")
 
+
+    dfC = getHistContent(h1, saveName)
+    # dfC.to_csv(f"hepdata/hists2D_{saveName}.csv", index=False, float_format='%.4f')
+
+
     odir = "results/"
     if not os.path.isdir(odir):
         os.mkdir(odir)
-    c1.SaveAs("{0}{1}.pdf".format(odir, saveName))
+    if (not showAllVals):
+        c1.SaveAs("{0}{1}.pdf".format(odir, saveName))
 
     del c1
     del h1
+    return dfC
 
 def DivideBinArea(h):
     for binx in range(1,h.GetNbinsX()):
@@ -151,30 +196,56 @@ def makePlotsPerYear(year, ifileName, ofile):
     hTempBkg =hBkg.Clone("hTempBkg")
     hTempBkg = getNoneZeroBins(hTempBkg, hBkg, 5e-4)
     hTempSig =hBkg.Clone("hTempSig")
-    hTempSig = getNoneZeroBins(hTempSig, hSig, 6e-6)
+    hTempSig = getNoneZeroBins(hTempSig, hSig, minSig)
     # hSig.Add(hTempSig)
     # hData.Add(hTempData)
     # hBkg.Add(hTempBkg)
     ###############
 
 
-    rootplot_2Dhist(hData, year, "tag",
+    dfData = rootplot_2Dhist(hData, year, "tag",
                     "Data distribution",
                     "aData",
                     ofile
                     )
 
-    rootplot_2Dhist(hSig, year, "tag",
+    dfSig = rootplot_2Dhist(hSig, year, "tag",
                     "Signal distribution",
                     "cSignal",
                     ofile
                     )
 
-    rootplot_2Dhist(hBkg, year, "tag",
+    dfBkg = rootplot_2Dhist(hBkg, year, "tag",
                     "Bkg. model distribution",
                     "bBkg",
                     ofile
                     )
+
+    if (showAllVals):
+        df = pd.concat([dfData, dfSig, dfBkg], axis=1)
+        # print (df['aData_binXlow'].equals(df['cSignal_binXlow']))
+        # print (df['aData_binXlow'].equals(df['bBkg_binXlow']))
+        # print (df['aData_binXhigh'].equals(df['cSignal_binXhigh']))
+        # print (df['aData_binXhigh'].equals(df['bBkg_binXhigh']))
+        # print (df['aData_binYlow'].equals(df['cSignal_binYlow']))
+        # print (df['aData_binYlow'].equals(df['bBkg_binYlow']))
+        # print (df['aData_binYhigh'].equals(df['cSignal_binYhigh']))
+        # print (df['aData_binYhigh'].equals(df['bBkg_binYhigh']))
+        df['aData_val'] = df['aData_val'].map(lambda x: '%.4f' % x)
+        df['bBkg_val'] = df['bBkg_val'].map(lambda x: '%.4f' % x)
+        df['cSignal_val'] = df['cSignal_val'].map(lambda x: '%0.8f' % x)
+
+        df = df.rename(columns={
+                "binXlow":"binX low edge",
+                "binXhigh":"binX high edge",
+                "binYlow":"binY low edge",
+                "binYhigh":"binY high edge",
+                "aData_val":"Data / GeV^2",
+                "bBkg_val":"Bkg / GeV^2",
+                "cSignal_val":"Sig (mX=700,mY=400) / GeV^2",
+            })
+        df.to_csv(f"hepdata/hists2D.csv", index=False)
+
 
 
     del hSig
@@ -190,6 +261,11 @@ args = parser.parse_args()
 
 ifile = "input/paperHists.root"
 ofile = ""
+
+showAllVals=False
+minSig=6e-6
+if (showAllVals):
+    minSig=4e-9
 
 makePlotsPerYear("{}".format(args.year), ifile, ofile)
 

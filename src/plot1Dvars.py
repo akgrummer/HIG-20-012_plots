@@ -8,10 +8,79 @@ import os
 from VariableDicts import varInfo
 import sys
 import math
+import pandas as pd
+
+def getHistContent(htemp,name):
+
+    lowList = []
+    highList = []
+    valList = []
+    errList = []
+    n = htemp.GetNbinsX ()
+    for i in range(n):
+        low = htemp.GetXaxis().GetBinLowEdge(i)
+        high = htemp.GetXaxis().GetBinUpEdge(i)
+        # high = low + htemp.GetBinWidth(i)
+        val = htemp.GetBinContent(i)
+        err = htemp.GetBinError(i)
+        if ((val>0 and low>=0) or low==94. or low==102. or low==110. or low==122. or low==140.):
+            # print(f"hist, bin= {low:0.4f}-{high:0.4f}, val={val:0.4f}, err={err:0.4f}")
+            if(name=="bkg"):
+                lowList.append(low)
+                highList.append(high)
+            valList.append(val)
+            errList.append(err)
+    if(name=="bkg"):
+        dfh = pd.DataFrame({
+            "binLow": lowList,
+            "binHigh": highList,
+            f"{name}_val": valList,
+            f"{name}_err": errList
+            })
+    else:
+        dfh = pd.DataFrame({
+            f"{name}_val": valList,
+            f"{name}_err": errList
+            })
+    return dfh
+
+def getGraphContent(gtemp,name):
+    centerList    = []
+    valList       = []
+    lowList       = []
+    highList      = []
+    err_highList  = []
+    err_lowList   = []
+    n = gtemp.GetN()
+    for i in range(n):
+        center    = gtemp.GetPointX(i)
+        val       = gtemp.GetPointY(i)
+        low       = center - gtemp.GetErrorXlow(i)
+        high      = center + gtemp.GetErrorXhigh(i)
+        err_high  = gtemp.GetErrorYhigh(i)
+        err_low   = gtemp.GetErrorYlow(i)
+        if ((val>0 and low>=0 and err_low>0) or low==110. or low==122.):
+            if (err_high==err_low):
+                # print(f"graph, bin= {low:0.4f}-{high:0.4f}, val={val:0.4f}, err={err_low:0.4f}")
+                lowList.append(low)
+                highList.append(high)
+                valList.append(val)
+                # err_highList.append(err_high)
+                err_lowList.append(err_low)
+            else:
+                print("ERROR: there are asymmentric error in this graph")
+    dfg = pd.DataFrame({
+        f"{name}_binLow": lowList,
+        f"{name}_binHigh": highList,
+        f"{name}_val": valList,
+        f"{name}_err": err_lowList
+        })
+    return dfg
 
 def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hsig1, hsig2, hsig3 ):
 
     h4 = h2.Clone("h4")
+    df = pd.DataFrame()
 
     # determine the stat err / bin content for 4b hist
     for i in range(h2.GetSize()):
@@ -161,6 +230,36 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
         hsig1.Draw("hist same")
         hsig2.Draw("hist same")
         hsig3.Draw("hist same")
+
+    if ( showAllVals ):
+        print(f"{var} {year} {region}" )
+        print("bkg")
+        # h1.Print("all")
+        dfC = getHistContent(h1, "bkg")
+        df = pd.concat([df, dfC], axis=1)
+        print("bkg errors")
+        # gr1.Print("all")
+        dfC = getGraphContent(gr1,"bkgErrs")
+        df = pd.concat([df, dfC], axis=1)
+        print("data")
+        # h2.Print("all")
+        dfC = getHistContent(h2, "data")
+        df = pd.concat([df, dfC], axis=1)
+
+        if ("SR" in region):
+            print("Sig 700 400")
+            # hsig1.Print("all")
+            dfC = getHistContent(hsig1, "Sig700400")
+            df = pd.concat([df, dfC], axis=1)
+            print("Sig 900 600")
+            # hsig2.Print("all")
+            dfC = getHistContent(hsig2, "Sig900600")
+            df = pd.concat([df, dfC], axis=1)
+            print("Sig 1600 200")
+            # hsig2.Print("all")
+            dfC = getHistContent(hsig3, "Sig1600200")
+            df = pd.concat([df, dfC], axis=1)
+
     # hshape1.Draw("hist same")
     # hshape2.Draw("hist same")
     #xaxis
@@ -243,10 +342,10 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
     if "2018" in year: plotlabels.DrawLatexNDC(0.70, 0.93, "59.7 fb^{-1} (13 TeV)")
 
     ##### ##### #####
-    hErrors = h2.Clone("hErrors")
-    hErrors.Divide(h1)
+    hRatio = h2.Clone("hRatio")
+    hRatio.Divide(h1)
     for i in range(h4.GetSize()):
-        h4.SetBinContent(i,hErrors.GetBinContent(i))
+        h4.SetBinContent(i,hRatio.GetBinContent(i))
     #  for i in xrange( b)
     # h4 = h1.Clone("h4")
     # #  print("number of bins, 3b: ", h1.GetSize())
@@ -254,11 +353,11 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
     # for i in range(h1.GetSize()):
     #     h4.SetBinContent(i,1)
     #     #  print(h1.GetBinError(i))
-    hErrors.SetMarkerStyle(20) # marker style (20 = filled circle) that can be resized
-    hErrors.SetMarkerSize(0.8)
-    hErrors.SetMarkerColor(1)
-    hErrors.SetLineColor(1)
-    hErrors.SetLineWidth(0)
+    hRatio.SetMarkerStyle(20) # marker style (20 = filled circle) that can be resized
+    hRatio.SetMarkerSize(0.8)
+    hRatio.SetMarkerColor(1)
+    hRatio.SetLineColor(1)
+    hRatio.SetLineWidth(0)
     h4.SetMarkerStyle(20) # marker style (20 = filled circle) that can be resized
     h4.SetMarkerSize(0.4)
     h4.SetMarkerColor(1)
@@ -332,39 +431,90 @@ def rootplot_2samp_ratio( h1, h2, year, region, var, tag, odir, h_up, h_down, hs
 
     #### draw the ratio hist in lower pad
     p2.cd()
-    hErrors.Draw("p") # draw as data points
+    hRatio.Draw("p") # draw as data points
     # h3.Draw("e2same") # draw as data points
     gr.Draw("2")
     h4.Draw("psame") # draw as data points
-    hErrors.Draw("psame") # draw as data points
+    hRatio.Draw("psame") # draw as data points
     #  h3.DrawClone("p same") # draw as data points
     #  h4.Draw("line same")
 
     #  LineAtOne = TLine(varInfo[var]['xlowRange'],1.,varInfo[var]['xhighRange'],1.) #x1,y1,x2,y2
-    LineAtOne = TLine(hErrors.GetXaxis().GetXmin(),1.,hErrors.GetXaxis().GetXmax(),1.) #x1,y1,x2,y2
+    LineAtOne = TLine(hRatio.GetXaxis().GetXmin(),1.,hRatio.GetXaxis().GetXmax(),1.) #x1,y1,x2,y2
     LineAtOne.SetLineWidth(2)
     LineAtOne.SetLineColor(1)
     LineAtOne.SetLineStyle(9)
     LineAtOne.Draw()
-    #  hErrors.GetYaxis().SetRangeUser(varInfo[var]['xlowRatioRange'],varInfo[var]['xhighRatioRange'])
+    #  hRatio.GetYaxis().SetRangeUser(varInfo[var]['xlowRatioRange'],varInfo[var]['xhighRatioRange'])
     #  h4.GetYaxis().SetRangeUser(varInfo[var]['xlowRatioRange'],varInfo[var]['xhighRatioRange'])
-    hErrors.GetYaxis().SetRangeUser(0.5, 1.5)
+    hRatio.GetYaxis().SetRangeUser(0.5, 1.5)
     h4.GetYaxis().SetRangeUser(0.5, 1.5)
-    hErrors.GetXaxis().SetLabelFont(42)
-    hErrors.GetXaxis().SetLabelSize(0.15)
-    hErrors.GetXaxis().SetLabelOffset(0.05)
-    hErrors.GetYaxis().SetLabelSize(0.12)
-    hErrors.GetYaxis().SetNdivisions(503)
-    hErrors.GetXaxis().SetTickLength(0.1)
-    hErrors.GetXaxis().SetTitleFont(43)
-    hErrors.GetXaxis().SetTitleSize(28)
-    hErrors.GetXaxis().SetTitleOffset(1.1)
-    hErrors.GetXaxis().SetTitle(varInfo[var]['XaxisTitle'])
-    hErrors.GetYaxis().SetTickLength(0.03)
-    hErrors.GetYaxis().SetTitleFont(43)
-    hErrors.GetYaxis().SetTitleSize(20)
-    hErrors.GetYaxis().SetTitleOffset(1.6)
-    hErrors.GetYaxis().SetTitle("Data / bkg.")
+    hRatio.GetXaxis().SetLabelFont(42)
+    hRatio.GetXaxis().SetLabelSize(0.15)
+    hRatio.GetXaxis().SetLabelOffset(0.05)
+    hRatio.GetYaxis().SetLabelSize(0.12)
+    hRatio.GetYaxis().SetNdivisions(503)
+    hRatio.GetXaxis().SetTickLength(0.1)
+    hRatio.GetXaxis().SetTitleFont(43)
+    hRatio.GetXaxis().SetTitleSize(28)
+    hRatio.GetXaxis().SetTitleOffset(1.1)
+    hRatio.GetXaxis().SetTitle(varInfo[var]['XaxisTitle'])
+    hRatio.GetYaxis().SetTickLength(0.03)
+    hRatio.GetYaxis().SetTitleFont(43)
+    hRatio.GetYaxis().SetTitleSize(20)
+    hRatio.GetYaxis().SetTitleOffset(1.6)
+    hRatio.GetYaxis().SetTitle("Data / bkg.")
+
+    if ( showAllVals ):
+        print(f"{var} {year} {region} ratio pad" )
+
+        print("ratio points")
+        # hRatio.Print("all")
+        dfC = getHistContent(hRatio, "ratio")
+        df = pd.concat([df, dfC], axis=1)
+
+        print("ratio errors")
+        # h4.Print("all")
+        dfC = getHistContent(h4, "ratioErrs")
+        df = pd.concat([df, dfC], axis=1)
+
+        print("ratio pad bkg errors")
+        # gr.Print("all")
+        dfC = getGraphContent(gr, "bkgErrsRatio")
+        df = pd.concat([df, dfC], axis=1)
+
+
+        if ("SR" in region):
+            df = df.drop( ["bkg_err", "bkgErrs_binLow", "bkgErrs_binHigh", "bkgErrs_val", "bkgErrsRatio_binLow", "bkgErrsRatio_binHigh", "bkgErrsRatio_val", "ratioErrs_val", "ratio_err", "Sig700400_err", "Sig900600_err", "Sig1600200_err"  ] , axis=1)
+            df = df.rename(columns={
+                    "binLow":"bin low edge",
+                    "binHigh":"bin high edge",
+                    "bkg_val":"Bkg / GeV",
+                    "bkgErrs_err":"Bkg unc. / GeV",
+                    "data_val":"Data / GeV",
+                    "data_err":"Data unc. / GeV",
+                    "Sig700400_val":"Sig (mX=700,mY=400) / GeV",
+                    "Sig900600_val":"Sig (mX=900,mY=600) / GeV",
+                    "Sig1600200_val":"Sig (mX=1600,mY=200) / GeV",
+                    "bkgErrsRatio_err":"Bkg unc. / bkg",
+                    "ratioErrs_err":"Data unc. / data",
+                    "ratio_val":"Data / bkg",
+                })
+        if ("VR" in region):
+            df = df.drop( ["bkg_err", "bkgErrs_binLow", "bkgErrs_binHigh", "bkgErrs_val", "bkgErrsRatio_binLow", "bkgErrsRatio_binHigh", "bkgErrsRatio_val", "ratioErrs_val", "ratio_err" ] , axis=1)
+            df = df.rename(columns={
+                    "binLow":"bin low edge",
+                    "binHigh":"bin high edge",
+                    "bkg_val":"Bkg / GeV",
+                    "bkgErrs_err":"Bkg unc. / GeV",
+                    "data_val":"Data / GeV",
+                    "data_err":"Data unc. / GeV",
+                    "bkgErrsRatio_err":"Bkg unc. / bkg",
+                    "ratioErrs_err":"Data unc. / data",
+                    "ratio_val":"Data / bkg",
+                })
+        df.to_csv(f"hepdata/{var}_{year}_{region}.csv", index=False, float_format='%.4f')
+
     odir = odir + "/" + region
     if not (os.path.exists(odir)): os.makedirs(odir)
     #  odirpng = odir + "/png"
@@ -468,7 +618,10 @@ years = ["2016","2017","2018"]
 # directories = ["selectionbJets_ControlRegionBlinded", "selectionbJets_ValidationRegionBlinded", "selectionbJets_SignalRegion"]
 directories = ["selectionbJets_SignalRegion", "selectionbJets_ValidationRegionBlinded"]
 # regionTag = ["CR", "VR", "SR"]
+# regionTag = ["SR", "VR"]
 regionTag = ["SR", "VR"]
+showAllVals=True
+# showAllVals=False
 # directories = ["selectionbJets_ControlRegionBlinded", "selectionbJets_ValidationRegionBlinded"]
 # regionTag = ["CR", "VR"]
 # Old event selections:
